@@ -1,7 +1,8 @@
-import { useRef, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { OrbitControls, Stars, Sparkles, ContactShadows } from '@react-three/drei'
-import { Group, Mesh, MathUtils, type MeshStandardMaterial } from 'three'
+import { Group, Mesh, MathUtils, PointLight, type MeshStandardMaterial } from 'three'
+import { useWorkspace } from '../state/workspace'
 
 function Parallax({ children }: { children: ReactNode }) {
   const ref = useRef<Group>(null)
@@ -17,23 +18,44 @@ function Parallax({ children }: { children: ReactNode }) {
 function CoreHub() {
   const core = useRef<Mesh>(null)
   const shell = useRef<Mesh>(null)
+  const group = useRef<Group>(null)
   const glow = useRef<MeshStandardMaterial>(null)
-  const pulse = useRef(0)
+  const light = useRef<PointLight>(null)
+  const idle = useRef(0)
+  const reaction = useRef(0)
+  const corePulse = useWorkspace((s) => s.corePulse)
+
+  useEffect(() => {
+    reaction.current = 1
+  }, [corePulse])
 
   useFrame((_, delta) => {
+    const activity = useWorkspace.getState().activityLevel
+    idle.current = (idle.current + delta) % (Math.PI * 2)
+    reaction.current = Math.max(0, reaction.current - delta * 2.2)
+
+    const speed = 0.3 + activity * 0.8 + reaction.current * 1.5
     if (core.current) {
-      core.current.rotation.y += delta * 0.3
-      core.current.rotation.x += delta * 0.12
+      core.current.rotation.y += delta * speed
+      core.current.rotation.x += delta * (0.12 + activity * 0.18)
     }
-    if (shell.current) shell.current.rotation.y -= delta * 0.14
-    pulse.current = (pulse.current + delta) % (Math.PI * 2)
+    if (shell.current) shell.current.rotation.y -= delta * (0.14 + activity * 0.1)
+
     if (glow.current) {
-      glow.current.emissiveIntensity = 1.2 + Math.sin(pulse.current * 1.5) * 0.35
+      glow.current.emissiveIntensity =
+        1.2 + Math.sin(idle.current * 1.5) * 0.3 + activity * 1.2 + reaction.current * 2.6
+    }
+    if (group.current) {
+      const s = 1 + activity * 0.06 + reaction.current * 0.16
+      group.current.scale.setScalar(s)
+    }
+    if (light.current) {
+      light.current.intensity = 7 + activity * 8 + reaction.current * 20
     }
   })
 
   return (
-    <group position={[0, 0.6, 0]}>
+    <group ref={group} position={[0, 0.6, 0]}>
       <mesh ref={core}>
         <octahedronGeometry args={[1.1, 0]} />
         <meshStandardMaterial ref={glow} color="#22d3ee" emissive="#22d3ee" emissiveIntensity={1.3} roughness={0.2} metalness={0.5} />
@@ -42,7 +64,7 @@ function CoreHub() {
         <icosahedronGeometry args={[1.9, 1]} />
         <meshBasicMaterial color="#22d3ee" wireframe transparent opacity={0.16} />
       </mesh>
-      <pointLight color="#22d3ee" intensity={7} distance={14} decay={2} />
+      <pointLight ref={light} color="#22d3ee" intensity={7} distance={14} decay={2} />
       <Sparkles count={90} scale={5.5} size={2.2} speed={0.35} color="#22d3ee" opacity={0.55} />
     </group>
   )
