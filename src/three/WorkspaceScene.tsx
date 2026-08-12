@@ -5,6 +5,7 @@ import { Group, Mesh, MathUtils, PointLight, type MeshStandardMaterial } from 't
 import { useWorkspace } from '../state/workspace'
 import { CameraRig } from './CameraRig'
 import { ProjectNodes } from './ProjectNodes'
+import { TaskNodes } from './TaskNodes'
 
 function Parallax({ children }: { children: ReactNode }) {
   const ref = useRef<Group>(null)
@@ -121,6 +122,7 @@ export function WorkspaceScene() {
         <ZoneRing radius={5.4} tilt={-0.45} speed={0.06} opacity={0.14} />
         <Platform />
         <ProjectNodes />
+        <TaskNodes />
       </Parallax>
 
       <Stars radius={60} depth={40} count={900} factor={3.2} saturation={0} fade speed={0.4} />

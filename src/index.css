@@ -717,3 +717,346 @@ button {
     flex-direction: row;
   }
 }
+
+/* ============ 3D task node label ============ */
+.tnode-label {
+  padding: 3px 7px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(10, 13, 20, 0.85);
+  font-size: 10px;
+  white-space: nowrap;
+  color: var(--text-0);
+  pointer-events: none;
+}
+
+/* ============ Task panel (2D productivity) ============ */
+.task-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 6, 10, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.task-panel {
+  width: min(840px, 94%);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tp-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tp-title {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.tp-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.tp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tp-filters {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.tp-filter {
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-1);
+  border: 1px solid transparent;
+  transition: color 0.15s, background 0.15s;
+}
+
+.tp-filter:hover {
+  color: var(--text-0);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tp-filter.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+  border-color: rgba(34, 211, 238, 0.3);
+}
+
+.tp-new {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #04121a;
+  background: linear-gradient(135deg, var(--accent), var(--blue));
+}
+
+.tp-form {
+  display: flex;
+  gap: 8px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tp-form input {
+  flex: 1;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-0);
+  outline: none;
+}
+
+.tp-form input:focus {
+  border-color: var(--accent);
+}
+
+.tp-form select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--surface-solid);
+  color: var(--text-0);
+  outline: none;
+}
+
+.tp-submit {
+  padding: 0 14px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #04121a;
+  background: var(--accent);
+}
+
+.tp-body {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  min-height: 0;
+  flex: 1;
+}
+
+.tp-list {
+  overflow: auto;
+  padding: 8px;
+  border-right: 1px solid var(--border);
+}
+
+.tp-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.tp-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tp-row.active {
+  background: var(--accent-dim);
+}
+
+.tp-check {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 5px;
+  color: #04121a;
+}
+
+.tp-check.done {
+  background: var(--ok);
+  border-color: var(--ok);
+}
+
+.tp-row-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.tp-row-title {
+  font-size: 13px;
+  color: var(--text-0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tp-row-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prio {
+  text-transform: uppercase;
+}
+
+.prio-high { color: var(--warn); }
+.prio-medium { color: var(--blue); }
+.prio-low { color: var(--text-2); }
+
+.tp-status {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+.tp-backlog { color: var(--text-1); }
+.tp-in-progress { color: var(--accent); border-color: rgba(34, 211, 238, 0.35); background: var(--accent-dim); }
+.tp-review { color: var(--warn); border-color: rgba(251, 191, 36, 0.35); background: rgba(251, 191, 36, 0.1); }
+.tp-completed { color: var(--ok); border-color: rgba(52, 211, 153, 0.35); background: rgba(52, 211, 153, 0.1); }
+
+.tp-empty {
+  padding: 30px;
+  text-align: center;
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.tp-detail {
+  padding: 16px;
+  overflow: auto;
+}
+
+.tp-detail-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.tp-detail-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-1);
+}
+
+.tp-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.tp-detail-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text-0);
+}
+
+.tp-detail-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tp-status-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tp-status-btn {
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--text-1);
+  border: 1px solid var(--border);
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.tp-status-btn:hover {
+  color: var(--text-0);
+  border-color: var(--border-strong);
+}
+
+.tp-status-btn.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.tp-complete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #04121a;
+  background: linear-gradient(135deg, var(--ok), var(--accent));
+}
+
+.tp-complete:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+@media (max-width: 720px) {
+  .tp-body {
+    grid-template-columns: 1fr;
+  }
+  .tp-list {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}

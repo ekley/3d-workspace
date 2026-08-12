@@ -3,7 +3,7 @@ import { CameraControls } from '@react-three/drei'
 import type CameraControlsImpl from 'camera-controls'
 import { useWorkspace } from '../state/workspace'
 import { PROJECTS } from '../data/mock'
-import { projectPosition } from './ProjectNodes'
+import { projectPosition } from './layout'
 
 const HOME_POS: [number, number, number] = [0, 6.5, 15]
 const HOME_TARGET: [number, number, number] = [0, 0.6, 0]

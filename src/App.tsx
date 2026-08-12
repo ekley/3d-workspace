@@ -4,6 +4,7 @@ import { SideDock } from './components/SideDock'
 import { QuickActions } from './components/QuickActions'
 import { StatusBar } from './components/StatusBar'
 import { ProjectPanel } from './components/ProjectPanel'
+import { TaskPanel } from './components/TaskPanel'
 import { Scene } from './three/Scene'
 import { useWorkspace } from './state/workspace'
 
@@ -30,6 +31,7 @@ export default function App() {
         <main className="viewport" aria-label="3D workspace">
           <Scene />
           <ProjectPanel />
+          <TaskPanel />
         </main>
         <QuickActions />
       </div>

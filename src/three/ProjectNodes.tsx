@@ -4,16 +4,7 @@ import { Html } from '@react-three/drei'
 import { Group, MathUtils } from 'three'
 import type { Project } from '../data/types'
 import { useWorkspace } from '../state/workspace'
-
-/** Deterministic ring position so the 3D nodes and the camera rig agree. */
-export function projectPosition(
-  index: number,
-  total: number,
-  radius = 4.3,
-): [number, number, number] {
-  const angle = (index / total) * Math.PI * 2 - Math.PI / 2
-  return [Math.cos(angle) * radius, 0.6, Math.sin(angle) * radius]
-}
+import { projectPosition } from './layout'
 
 function ProjectNode({ project, index, total }: { project: Project; index: number; total: number }) {
   const group = useRef<Group>(null)
