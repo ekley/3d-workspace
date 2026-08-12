@@ -6,6 +6,7 @@ import { StatusBar } from './components/StatusBar'
 import { ProjectPanel } from './components/ProjectPanel'
 import { TaskPanel } from './components/TaskPanel'
 import { ActivityPanel } from './components/ActivityPanel'
+import { FilePanel } from './components/FilePanel'
 import { Scene } from './three/Scene'
 import { useWorkspace } from './state/workspace'
 
@@ -34,6 +35,7 @@ export default function App() {
           <ProjectPanel />
           <TaskPanel />
           <ActivityPanel />
+          <FilePanel />
         </main>
         <QuickActions />
       </div>

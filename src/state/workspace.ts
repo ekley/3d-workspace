@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import type { ActivityEvent, Project, Task, User } from '../data/types'
-import { ACTIVITY, PROJECTS, TASKS, USER } from '../data/mock'
+import type { ActivityEvent, FileCategory, FileItem, Project, Task, User } from '../data/types'
+import { ACTIVITY, FILES, PROJECTS, TASKS, USER } from '../data/mock'
 import { taskOrbitPosition } from '../three/layout'
 
 export type Mode = 'immersive' | 'productivity'
@@ -48,9 +48,12 @@ interface WorkspaceState {
   projects: Project[]
   tasks: Task[]
   activity: ActivityEvent[]
+  files: FileItem[]
   selectedProjectId: string | null
   focusedProjectId: string | null
   selectedTaskId: string | null
+  selectedFileId: string | null
+  selectedCategory: FileCategory | 'all'
   // workspace activity signal (0..1) — drives core reactivity
   activityLevel: number
   corePulse: number
@@ -61,6 +64,8 @@ interface WorkspaceState {
   selectProject: (id: string | null) => void
   focusProject: (id: string | null) => void
   selectTask: (id: string | null) => void
+  selectFile: (id: string | null) => void
+  selectCategory: (cat: FileCategory | 'all') => void
   bumpActivity: (amount?: number) => void
   completeTask: (id: string) => void
   createTask: (input: NewTaskInput) => void
@@ -75,9 +80,12 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   projects: PROJECTS,
   tasks: TASKS,
   activity: ACTIVITY,
+  files: FILES,
   selectedProjectId: null,
   focusedProjectId: null,
   selectedTaskId: null,
+  selectedFileId: null,
+  selectedCategory: 'all',
   activityLevel: 0,
   corePulse: 0,
   completedFx: {},
@@ -87,6 +95,8 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   selectProject: (selectedProjectId) => set({ selectedProjectId }),
   focusProject: (focusedProjectId) => set({ focusedProjectId }),
   selectTask: (selectedTaskId) => set({ selectedTaskId }),
+  selectFile: (selectedFileId) => set({ selectedFileId }),
+  selectCategory: (selectedCategory) => set({ selectedCategory }),
   bumpActivity: (amount = 0.6) =>
     set((s) => ({ activityLevel: Math.min(1, s.activityLevel + amount), corePulse: s.corePulse + 1 })),
 

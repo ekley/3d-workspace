@@ -1158,3 +1158,177 @@ button {
   font-size: 10px;
   color: var(--text-2);
 }
+
+/* ============ 3D file cluster label ============ */
+.fcluster-label {
+  padding: 5px 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(10, 13, 20, 0.82);
+  text-align: center;
+  pointer-events: none;
+}
+
+.fcluster-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-0);
+}
+
+.fcluster-count {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-2);
+}
+
+/* ============ File browser ============ */
+.file-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 6, 10, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.file-panel {
+  width: min(820px, 94%);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.file-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-2);
+}
+
+.file-search input {
+  border: none;
+  background: none;
+  color: var(--text-0);
+  font-size: 13px;
+  outline: none;
+  width: 150px;
+}
+
+.file-list {
+  overflow: auto;
+  padding: 8px;
+  border-right: 1px solid var(--border);
+}
+
+.file-group {
+  margin-bottom: 8px;
+}
+
+.file-group-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 8px 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.file-group-cat {
+  color: var(--text-1);
+}
+
+.file-group-folder {
+  color: var(--text-2);
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.file-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.file-row.active {
+  background: var(--accent-dim);
+}
+
+.file-ext {
+  flex: none;
+  width: 34px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.file-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-name {
+  font-size: 13px;
+  color: var(--text-0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-2);
+  margin-top: 1px;
+}
+
+.file-proj {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text-2);
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.file-detail-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--accent);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  background: var(--accent-dim);
+  margin-bottom: 10px;
+}
+
+@media (max-width: 720px) {
+  .file-list {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}

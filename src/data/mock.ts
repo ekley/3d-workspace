@@ -1,4 +1,4 @@
-import type { ActivityEvent, Project, Task, User } from './types'
+import type { ActivityEvent, FileItem, Project, Task, User } from './types'
 
 export const USER: User = {
   name: 'Elena Voss',
@@ -133,4 +133,32 @@ export const ACTIVITY: ActivityEvent[] = [
   { id: 'ev-20', type: 'deployment', icon: 'close', title: 'DEPLOYMENT ROLLED BACK', detail: 'Vault · key rotation failed', time: '1d ago', severity: 'critical', projectId: 'vault' },
   { id: 'ev-21', type: 'streak', icon: 'zap', title: 'STREAK MAINTAINED', detail: '14 day productivity streak', time: '3d ago', severity: 'success' },
   { id: 'ev-22', type: 'file-uploaded', icon: 'upload', title: 'NEW FILE UPLOADED', detail: 'Drift · sign-off-mockup.png', time: '1w ago', severity: 'info', projectId: 'drift' },
+]
+
+export const FILES: FileItem[] = [
+  { id: 'f-1', name: 'atlas-architecture.md', category: 'documents', folder: 'Specs', ext: 'md', size: '24 KB', updatedAt: '2d ago', projectId: 'atlas' },
+  { id: 'f-2', name: 'helios-tokens-spec.md', category: 'documents', folder: 'Specs', ext: 'md', size: '12 KB', updatedAt: '1d ago', projectId: 'helios' },
+  { id: 'f-3', name: 'vault-security-review.pdf', category: 'documents', folder: 'Specs', ext: 'pdf', size: '1.2 MB', updatedAt: '5d ago', projectId: 'vault' },
+  { id: 'f-4', name: 'q1-telemetry-report.pdf', category: 'documents', folder: 'Reports', ext: 'pdf', size: '3.4 MB', updatedAt: '1w ago', projectId: 'atlas' },
+  { id: 'f-5', name: 'incident-postmortem.docx', category: 'documents', folder: 'Reports', ext: 'docx', size: '210 KB', updatedAt: '3d ago', projectId: 'pulse' },
+  { id: 'f-6', name: 'onboarding-guide.md', category: 'documents', folder: 'Reports', ext: 'md', size: '8 KB', updatedAt: '6d ago' },
+
+  { id: 'f-7', name: 'index.ts', category: 'code', folder: 'src', ext: 'ts', size: '4 KB', updatedAt: '3h ago', projectId: 'helios' },
+  { id: 'f-8', name: 'query-builder.ts', category: 'code', folder: 'src', ext: 'ts', size: '32 KB', updatedAt: '2h ago', projectId: 'atlas' },
+  { id: 'f-9', name: 'anomaly-detector.py', category: 'code', folder: 'src', ext: 'py', size: '18 KB', updatedAt: '1d ago', projectId: 'atlas' },
+  { id: 'f-10', name: 'docker-compose.yml', category: 'code', folder: 'config', ext: 'yml', size: '2 KB', updatedAt: '4d ago', projectId: 'pulse' },
+  { id: 'f-11', name: 'ci-pipeline.yml', category: 'code', folder: 'config', ext: 'yml', size: '5 KB', updatedAt: '2d ago' },
+  { id: 'f-12', name: 'eslint.config.js', category: 'code', folder: 'config', ext: 'js', size: '3 KB', updatedAt: '5d ago' },
+
+  { id: 'f-13', name: 'dashboard-v2.fig', category: 'design', folder: 'Mockups', ext: 'fig', size: '18 MB', updatedAt: '1d ago', projectId: 'helios' },
+  { id: 'f-14', name: 'mobile-app.fig', category: 'design', folder: 'Mockups', ext: 'fig', size: '24 MB', updatedAt: '1w ago', projectId: 'drift' },
+  { id: 'f-15', name: 'tokens-v3.json', category: 'design', folder: 'Tokens', ext: 'json', size: '40 KB', updatedAt: '5h ago', projectId: 'helios' },
+  { id: 'f-16', name: 'color-palette.json', category: 'design', folder: 'Tokens', ext: 'json', size: '12 KB', updatedAt: '3d ago' },
+  { id: 'f-17', name: 'icons.svg', category: 'design', folder: 'Tokens', ext: 'svg', size: '64 KB', updatedAt: '4d ago', projectId: 'helios' },
+
+  { id: 'f-18', name: 'logo-hero.png', category: 'images', folder: 'Assets', ext: 'png', size: '1.1 MB', updatedAt: '2w ago' },
+  { id: 'f-19', name: 'empty-state.png', category: 'images', folder: 'Assets', ext: 'png', size: '240 KB', updatedAt: '1w ago' },
+  { id: 'f-20', name: 'onboarding-1.png', category: 'images', folder: 'Screenshots', ext: 'png', size: '890 KB', updatedAt: '5d ago', projectId: 'drift' },
+  { id: 'f-21', name: 'landing-hero.png', category: 'images', folder: 'Screenshots', ext: 'png', size: '1.6 MB', updatedAt: '1w ago' },
+  { id: 'f-22', name: 'dark-mode.png', category: 'images', folder: 'Screenshots', ext: 'png', size: '420 KB', updatedAt: '3d ago', projectId: 'helios' },
 ]
