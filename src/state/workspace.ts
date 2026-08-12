@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import type { User } from '../data/types'
-import { USER } from '../data/mock'
+import type { Project, User } from '../data/types'
+import { PROJECTS, USER } from '../data/mock'
 
 export type Mode = 'immersive' | 'productivity'
 
@@ -23,12 +23,17 @@ interface WorkspaceState {
   mode: Mode
   activeNav: string
   user: User
+  projects: Project[]
+  selectedProjectId: string | null
+  focusedProjectId: string | null
   // workspace activity signal (0..1) — drives core reactivity
   activityLevel: number
   // increments on every activity bump; 3D core reacts to the delta
   corePulse: number
   setMode: (mode: Mode) => void
   setNav: (id: string) => void
+  selectProject: (id: string | null) => void
+  focusProject: (id: string | null) => void
   bumpActivity: (amount?: number) => void
 }
 
@@ -36,10 +41,15 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   mode: 'immersive',
   activeNav: 'overview',
   user: USER,
+  projects: PROJECTS,
+  selectedProjectId: null,
+  focusedProjectId: null,
   activityLevel: 0,
   corePulse: 0,
   setMode: (mode) => set({ mode }),
   setNav: (activeNav) => set({ activeNav }),
+  selectProject: (selectedProjectId) => set({ selectedProjectId }),
+  focusProject: (focusedProjectId) => set({ focusedProjectId }),
   bumpActivity: (amount = 0.6) =>
     set((s) => ({
       activityLevel: Math.min(1, s.activityLevel + amount),

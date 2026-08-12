@@ -1,8 +1,10 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { OrbitControls, Stars, Sparkles, ContactShadows } from '@react-three/drei'
+import { Stars, Sparkles, ContactShadows } from '@react-three/drei'
 import { Group, Mesh, MathUtils, PointLight, type MeshStandardMaterial } from 'three'
 import { useWorkspace } from '../state/workspace'
+import { CameraRig } from './CameraRig'
+import { ProjectNodes } from './ProjectNodes'
 
 function Parallax({ children }: { children: ReactNode }) {
   const ref = useRef<Group>(null)
@@ -118,22 +120,13 @@ export function WorkspaceScene() {
         <ZoneRing radius={4.3} tilt={0.5} speed={-0.05} color="#8b7cf6" opacity={0.18} />
         <ZoneRing radius={5.4} tilt={-0.45} speed={0.06} opacity={0.14} />
         <Platform />
+        <ProjectNodes />
       </Parallax>
 
       <Stars radius={60} depth={40} count={900} factor={3.2} saturation={0} fade speed={0.4} />
       <Sparkles count={140} scale={16} size={1.6} speed={0.2} color="#9aa4b8" opacity={0.4} />
 
-      <OrbitControls
-        enablePan={false}
-        enableDamping
-        dampingFactor={0.08}
-        minDistance={7}
-        maxDistance={26}
-        minPolarAngle={Math.PI * 0.2}
-        maxPolarAngle={Math.PI * 0.55}
-        target={[0, 0.6, 0]}
-        makeDefault
-      />
+      <CameraRig />
     </>
   )
 }

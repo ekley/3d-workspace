@@ -1,4 +1,4 @@
-import type { User } from './types'
+import type { Project, User } from './types'
 
 export const USER: User = {
   name: 'Elena Voss',
@@ -12,3 +12,74 @@ export const USER: User = {
   streak: 14,
   productivity: 92,
 }
+
+export const PROJECTS: Project[] = [
+  {
+    id: 'atlas',
+    name: 'Atlas',
+    code: 'ATL',
+    description:
+      'AI analytics platform turning raw product telemetry into live operational insights.',
+    status: 'active',
+    progress: 72,
+    deadline: 'Mar 28',
+    taskCount: 12,
+    doneCount: 8,
+    lastActivity: '2h ago · Kira merged "query builder v2"',
+    color: '#22d3ee',
+  },
+  {
+    id: 'helios',
+    name: 'Helios',
+    code: 'HEL',
+    description:
+      'Cross-platform design system and component library for all client surfaces.',
+    status: 'active',
+    progress: 45,
+    deadline: 'Apr 10',
+    taskCount: 18,
+    doneCount: 8,
+    lastActivity: '5h ago · Design tokens synced',
+    color: '#8b7cf6',
+  },
+  {
+    id: 'vault',
+    name: 'Vault',
+    code: 'VLT',
+    description:
+      'Encrypted storage core with zero-trust key rotation and audit logging.',
+    status: 'at-risk',
+    progress: 31,
+    deadline: 'Mar 19',
+    taskCount: 9,
+    doneCount: 3,
+    lastActivity: '1d ago · Key rotation test failed CI',
+    color: '#fbbf24',
+  },
+  {
+    id: 'pulse',
+    name: 'Pulse',
+    code: 'PLS',
+    description: 'Realtime infrastructure monitoring with anomaly detection and alerting.',
+    status: 'completed',
+    progress: 100,
+    deadline: 'Feb 27',
+    taskCount: 14,
+    doneCount: 14,
+    lastActivity: '3d ago · v2.0.0 shipped',
+    color: '#34d399',
+  },
+  {
+    id: 'drift',
+    name: 'Drift',
+    code: 'DRF',
+    description: 'Mobile companion app for on-the-go approvals and notifications.',
+    status: 'paused',
+    progress: 18,
+    deadline: 'May 02',
+    taskCount: 11,
+    doneCount: 2,
+    lastActivity: '1w ago · Waiting on design sign-off',
+    color: '#6b8af0',
+  },
+]

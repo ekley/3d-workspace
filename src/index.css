@@ -412,6 +412,257 @@ button {
   border: none;
 }
 
+/* ============ 3D project node labels ============ */
+.pnode-label {
+  min-width: 108px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(10, 13, 20, 0.82);
+  backdrop-filter: blur(8px);
+  text-align: left;
+  pointer-events: none;
+  transition: border-color 0.15s, opacity 0.15s;
+}
+
+.pnode-label.selected {
+  border-color: rgba(34, 211, 238, 0.5);
+}
+
+.pnode-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pnode-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-0);
+}
+
+.pnode-code {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-2);
+  letter-spacing: 0.1em;
+}
+
+.pnode-bar {
+  height: 3px;
+  margin: 5px 0 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.pnode-bar > span {
+  display: block;
+  height: 100%;
+}
+
+.pnode-meta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-2);
+}
+
+/* ============ Project panel ============ */
+.project-panel-wrap {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+}
+
+.project-panel {
+  width: 300px;
+  padding: 16px;
+}
+
+.workspace-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 6, 10, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.workspace {
+  width: min(680px, 92%);
+  max-height: 82vh;
+  overflow: auto;
+  padding: 20px;
+}
+
+.pp-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pp-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pp-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.pp-code {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-2);
+  letter-spacing: 0.12em;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.pp-sub {
+  font-size: 12px;
+  color: var(--text-1);
+  margin-top: 4px;
+  max-width: 460px;
+}
+
+.pp-head-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-1);
+}
+
+.badge-active { color: var(--accent); border-color: rgba(34, 211, 238, 0.4); background: var(--accent-dim); }
+.badge-completed { color: var(--ok); border-color: rgba(52, 211, 153, 0.4); background: rgba(52, 211, 153, 0.1); }
+.badge-at-risk { color: var(--warn); border-color: rgba(251, 191, 36, 0.4); background: rgba(251, 191, 36, 0.1); }
+.badge-paused { color: var(--text-1); }
+
+.pp-desc {
+  font-size: 12px;
+  color: var(--text-1);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.pp-progress-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-1);
+  margin-bottom: 6px;
+}
+
+.pp-progress-bar {
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.pp-progress-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.pp-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.pp-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pp-stat-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.pp-stat-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-0);
+}
+
+.pp-activity {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pp-activity-text {
+  font-size: 12px;
+  color: var(--text-1);
+}
+
+.pp-enter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #04121a;
+  background: linear-gradient(135deg, var(--accent), var(--blue));
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.pp-enter:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
 /* ============ Status bar ============ */
 .status {
   display: flex;
