@@ -10,6 +10,7 @@ import { FilePanel } from './components/FilePanel'
 import { CalendarPanel } from './components/CalendarPanel'
 import { GamificationPanel } from './components/GamificationPanel'
 import { Scene } from './three/Scene'
+import { CommandPalette } from './components/CommandPalette'
 import { useWorkspace } from './state/workspace'
 
 export default function App() {
@@ -44,6 +45,7 @@ export default function App() {
         <QuickActions />
       </div>
       <StatusBar />
+      <CommandPalette />
     </div>
   )
 }

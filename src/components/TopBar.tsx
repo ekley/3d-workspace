@@ -4,6 +4,7 @@ import { useWorkspace } from '../state/workspace'
 export function TopBar() {
   const user = useWorkspace((s) => s.user)
   const setProfileOpen = useWorkspace((s) => s.setProfileOpen)
+  const setCommandOpen = useWorkspace((s) => s.setCommandOpen)
   const pct = Math.round((user.xp / user.xpToNext) * 100)
 
   return (
@@ -18,9 +19,9 @@ export function TopBar() {
         </div>
       </div>
 
-      <div className="search">
+      <div className="search" onClick={() => setCommandOpen(true)} role="button" tabIndex={0}>
         <Icon name="search" size={16} />
-        <input placeholder="Search workspace…" aria-label="Search workspace" />
+        <input placeholder="Search workspace…" aria-label="Search workspace" readOnly />
         <span className="kbd">⌘K</span>
       </div>
 
