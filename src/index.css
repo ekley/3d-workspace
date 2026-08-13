@@ -1718,3 +1718,43 @@ button {
   font-size: 10px;
   color: var(--text-2);
 }
+
+/* ============ Transition system ============ */
+.task-overlay,
+.activity-overlay,
+.file-overlay,
+.cal-overlay,
+.profile-overlay,
+.pal-overlay,
+.workspace-overlay {
+  animation: fade-in 0.16s ease-out;
+}
+
+.task-overlay > .panel,
+.activity-overlay > .panel,
+.file-overlay > .panel,
+.cal-overlay > .panel,
+.profile-overlay > .panel,
+.pal,
+.workspace-overlay > .panel {
+  animation: pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-panel {
+  animation: slide-in-right 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.96); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: none; }
+}
