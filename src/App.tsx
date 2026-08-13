@@ -8,6 +8,7 @@ import { TaskPanel } from './components/TaskPanel'
 import { ActivityPanel } from './components/ActivityPanel'
 import { FilePanel } from './components/FilePanel'
 import { CalendarPanel } from './components/CalendarPanel'
+import { GamificationPanel } from './components/GamificationPanel'
 import { Scene } from './three/Scene'
 import { useWorkspace } from './state/workspace'
 
@@ -38,6 +39,7 @@ export default function App() {
           <ActivityPanel />
           <FilePanel />
           <CalendarPanel />
+          <GamificationPanel />
         </main>
         <QuickActions />
       </div>

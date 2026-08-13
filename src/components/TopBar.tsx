@@ -3,6 +3,7 @@ import { useWorkspace } from '../state/workspace'
 
 export function TopBar() {
   const user = useWorkspace((s) => s.user)
+  const setProfileOpen = useWorkspace((s) => s.setProfileOpen)
   const pct = Math.round((user.xp / user.xpToNext) * 100)
 
   return (
@@ -31,7 +32,7 @@ export function TopBar() {
         <button className="icon-btn" aria-label="Settings">
           <Icon name="settings" size={18} />
         </button>
-        <button className="user-chip" aria-label="User profile">
+        <button className="user-chip" aria-label="User profile" onClick={() => setProfileOpen(true)}>
           <span className="avatar">{user.initials}</span>
           <span className="user-meta">
             <span className="name">{user.name}</span>

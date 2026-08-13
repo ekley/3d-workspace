@@ -1462,3 +1462,147 @@ button {
     border-bottom: 1px solid var(--border);
   }
 }
+
+/* ============ Gamification / profile ============ */
+.profile-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 6, 10, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.profile-panel {
+  width: min(480px, 94%);
+  max-height: 88vh;
+  overflow: auto;
+  padding: 0;
+}
+
+.prof-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.prof-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  font-size: 15px;
+}
+
+.prof-level {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 18px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(34, 211, 238, 0.04);
+}
+
+.prof-level-badge {
+  flex: none;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: #04121a;
+  background: linear-gradient(135deg, var(--accent), var(--violet));
+  box-shadow: 0 0 22px rgba(34, 211, 238, 0.35);
+}
+
+.prof-level-info {
+  flex: 1;
+}
+
+.prof-level-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-0);
+  margin-bottom: 7px;
+}
+
+.prof-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 14px 18px;
+}
+
+.prof-section {
+  padding: 4px 18px 16px;
+}
+
+.prof-section-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 10px;
+}
+
+.mission {
+  margin-bottom: 12px;
+}
+
+.mission-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-1);
+  margin-bottom: 5px;
+}
+
+.mission.done .mission-title {
+  color: var(--ok);
+}
+
+.mission-nums {
+  font-size: 10px;
+  color: var(--text-2);
+}
+
+.milestone {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  margin-bottom: 6px;
+}
+
+.milestone-icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  color: var(--ok);
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.milestone-title {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-0);
+}
+
+.milestone-meta {
+  font-size: 10px;
+  color: var(--text-2);
+}

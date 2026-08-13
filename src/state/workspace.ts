@@ -56,6 +56,7 @@ interface WorkspaceState {
   selectedFileId: string | null
   selectedCategory: FileCategory | 'all'
   selectedEventId: string | null
+  profileOpen: boolean
   // workspace activity signal (0..1) — drives core reactivity
   activityLevel: number
   corePulse: number
@@ -69,6 +70,7 @@ interface WorkspaceState {
   selectFile: (id: string | null) => void
   selectCategory: (cat: FileCategory | 'all') => void
   selectEvent: (id: string | null) => void
+  setProfileOpen: (open: boolean) => void
   bumpActivity: (amount?: number) => void
   completeTask: (id: string) => void
   createTask: (input: NewTaskInput) => void
@@ -91,6 +93,7 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   selectedFileId: null,
   selectedCategory: 'all',
   selectedEventId: null,
+  profileOpen: false,
   activityLevel: 0,
   corePulse: 0,
   completedFx: {},
@@ -103,6 +106,7 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   selectFile: (selectedFileId) => set({ selectedFileId }),
   selectCategory: (selectedCategory) => set({ selectedCategory }),
   selectEvent: (selectedEventId) => set({ selectedEventId }),
+  setProfileOpen: (profileOpen) => set({ profileOpen }),
   bumpActivity: (amount = 0.6) =>
     set((s) => ({ activityLevel: Math.min(1, s.activityLevel + amount), corePulse: s.corePulse + 1 })),
 
