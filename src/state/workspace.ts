@@ -104,7 +104,12 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   setMode: (mode) => set({ mode }),
   setNav: (activeNav) => set({ activeNav }),
   selectProject: (selectedProjectId) => set({ selectedProjectId }),
-  focusProject: (focusedProjectId) => set({ focusedProjectId }),
+  focusProject: (focusedProjectId) =>
+    set((s) => ({
+      focusedProjectId,
+      activityLevel: focusedProjectId ? Math.min(1, s.activityLevel + 0.25) : s.activityLevel,
+      corePulse: focusedProjectId ? s.corePulse + 1 : s.corePulse,
+    })),
   selectTask: (selectedTaskId) => set({ selectedTaskId }),
   selectFile: (selectedFileId) => set({ selectedFileId }),
   selectCategory: (selectedCategory) => set({ selectedCategory }),
