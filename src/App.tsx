@@ -7,6 +7,7 @@ import { ProjectPanel } from './components/ProjectPanel'
 import { TaskPanel } from './components/TaskPanel'
 import { ActivityPanel } from './components/ActivityPanel'
 import { FilePanel } from './components/FilePanel'
+import { CalendarPanel } from './components/CalendarPanel'
 import { Scene } from './three/Scene'
 import { useWorkspace } from './state/workspace'
 
@@ -36,6 +37,7 @@ export default function App() {
           <TaskPanel />
           <ActivityPanel />
           <FilePanel />
+          <CalendarPanel />
         </main>
         <QuickActions />
       </div>

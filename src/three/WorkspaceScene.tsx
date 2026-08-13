@@ -7,6 +7,7 @@ import { CameraRig } from './CameraRig'
 import { ProjectNodes } from './ProjectNodes'
 import { TaskNodes } from './TaskNodes'
 import { FileClusters } from './FileClusters'
+import { CalendarTimeline } from './CalendarTimeline'
 
 function Parallax({ children }: { children: ReactNode }) {
   const ref = useRef<Group>(null)
@@ -125,6 +126,7 @@ export function WorkspaceScene() {
         <ProjectNodes />
         <TaskNodes />
         <FileClusters />
+        <CalendarTimeline />
       </Parallax>
 
       <Stars radius={60} depth={40} count={900} factor={3.2} saturation={0} fade speed={0.4} />

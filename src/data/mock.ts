@@ -1,4 +1,4 @@
-import type { ActivityEvent, FileItem, Project, Task, User } from './types'
+import type { ActivityEvent, CalendarEvent, FileItem, Project, Task, User } from './types'
 
 export const USER: User = {
   name: 'Elena Voss',
@@ -161,4 +161,19 @@ export const FILES: FileItem[] = [
   { id: 'f-20', name: 'onboarding-1.png', category: 'images', folder: 'Screenshots', ext: 'png', size: '890 KB', updatedAt: '5d ago', projectId: 'drift' },
   { id: 'f-21', name: 'landing-hero.png', category: 'images', folder: 'Screenshots', ext: 'png', size: '1.6 MB', updatedAt: '1w ago' },
   { id: 'f-22', name: 'dark-mode.png', category: 'images', folder: 'Screenshots', ext: 'png', size: '420 KB', updatedAt: '3d ago', projectId: 'helios' },
+]
+
+export const EVENTS: CalendarEvent[] = [
+  { id: 'evt-1', title: 'Atlas sprint planning', date: 'Mar 17', day: 'MON', time: '09:30', duration: '1h', projectId: 'atlas', participants: ['Elena', 'Kira', 'Sam'], location: 'Atlas room', important: true },
+  { id: 'evt-2', title: 'Design critique: query builder', date: 'Mar 17', day: 'MON', time: '14:00', duration: '45m', projectId: 'atlas', participants: ['Kira', 'Mina'], location: 'FigJam', important: false },
+  { id: 'evt-3', title: 'Helios tokens review', date: 'Mar 18', day: 'TUE', time: '11:00', duration: '30m', projectId: 'helios', participants: ['Mina', 'Elena'], location: 'Meet', important: true },
+  { id: 'evt-4', title: '1:1 with Sam', date: 'Mar 18', day: 'TUE', time: '16:00', duration: '30m', participants: ['Elena', 'Sam'], location: 'Zoom', important: false },
+  { id: 'evt-5', title: 'Vault security sync', date: 'Mar 19', day: 'WED', time: '10:00', duration: '1h', projectId: 'vault', participants: ['Sam', 'Priya', 'Elena'], location: 'Meet', important: true },
+  { id: 'evt-6', title: 'Pulse retro', date: 'Mar 19', day: 'WED', time: '15:30', duration: '1h', projectId: 'pulse', participants: ['Elena', 'Leo', 'Mina', 'Priya'], location: 'Meet', important: false },
+  { id: 'evt-7', title: 'Vault release deadline', date: 'Mar 20', day: 'THU', time: '17:00', duration: '—', projectId: 'vault', participants: [], location: 'Deadline', important: true },
+  { id: 'evt-8', title: 'Company all-hands', date: 'Mar 20', day: 'THU', time: '12:00', duration: '45m', participants: ['Everyone'], location: 'Town hall', important: false },
+  { id: 'evt-9', title: 'Drift design sign-off', date: 'Mar 21', day: 'FRI', time: '10:30', duration: '1h', projectId: 'drift', participants: ['Mina', 'Elena'], location: 'Meet', important: true },
+  { id: 'evt-10', title: 'Atlas demo prep', date: 'Mar 21', day: 'FRI', time: '14:00', duration: '1h', projectId: 'atlas', participants: ['Kira', 'Elena'], location: 'Studio', important: false },
+  { id: 'evt-11', title: 'Week review', date: 'Mar 21', day: 'FRI', time: '16:00', duration: '30m', participants: ['Elena'], location: 'Focus', important: false },
+  { id: 'evt-12', title: 'Vault key rotation (prod)', date: 'Mar 24', day: 'MON', time: '09:00', duration: '2h', projectId: 'vault', participants: ['Sam'], location: 'Ops bridge', important: true },
 ]
