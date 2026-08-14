@@ -12,6 +12,7 @@ export function CameraRig() {
   const ref = useRef<CameraControlsImpl | null>(null)
   const selectedId = useWorkspace((s) => s.selectedProjectId)
   const focusedId = useWorkspace((s) => s.focusedProjectId)
+  const reduced = useWorkspace((s) => s.settings.reducedMotion)
 
   useEffect(() => {
     const c = ref.current
@@ -27,8 +28,8 @@ export function CameraRig() {
       target = [px, py, pz]
       pos = [px + (px / len) * dist, py + 1.3, pz + (pz / len) * dist]
     }
-    c.setLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2], true)
-  }, [selectedId, focusedId])
+    c.setLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2], !reduced)
+  }, [selectedId, focusedId, reduced])
 
   return (
     <CameraControls

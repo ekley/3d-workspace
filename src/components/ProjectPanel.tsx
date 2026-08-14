@@ -14,7 +14,7 @@ export function ProjectPanel() {
   const focusedId = useWorkspace((s) => s.focusedProjectId)
   const selectProject = useWorkspace((s) => s.selectProject)
   const focusProject = useWorkspace((s) => s.focusProject)
-  const mode = useWorkspace((s) => s.mode)
+  const immersive = useWorkspace((s) => s.mode === 'immersive' && !s.settings.disable3D)
 
   const project = projects.find((p) => p.id === (focusedId ?? selectedId))
   if (!project) return null
@@ -85,7 +85,7 @@ export function ProjectPanel() {
           <span className="pp-activity-text">{project.lastActivity}</span>
         </div>
 
-        {!expanded && mode === 'immersive' && (
+        {!expanded && immersive && (
           <button className="pp-enter" onClick={() => focusProject(project.id)}>
             <Icon name="maximize" size={16} />
             Open workspace

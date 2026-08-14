@@ -6,6 +6,7 @@ import { StatusBar } from './components/StatusBar'
 import { ProjectPanel } from './components/ProjectPanel'
 import { ProjectsPanel } from './components/ProjectsPanel'
 import { ProductivityDashboard } from './components/ProductivityDashboard'
+import { SettingsPanel } from './components/SettingsPanel'
 import { TaskPanel } from './components/TaskPanel'
 import { ActivityPanel } from './components/ActivityPanel'
 import { FilePanel } from './components/FilePanel'
@@ -20,6 +21,9 @@ export default function App() {
   const selectProject = useWorkspace((s) => s.selectProject)
   const focusProject = useWorkspace((s) => s.focusProject)
   const mode = useWorkspace((s) => s.mode)
+  const disable3D = useWorkspace((s) => s.settings.disable3D)
+  const reducedMotion = useWorkspace((s) => s.settings.reducedMotion)
+  const immersive = mode === 'immersive' && !disable3D
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -33,12 +37,12 @@ export default function App() {
   }, [selectProject, focusProject])
 
   return (
-    <div className="app">
+    <div className={`app${reducedMotion ? ' reduce-motion' : ''}`}>
       <TopBar />
       <div className="stage">
         <SideDock />
-        <main className="viewport" aria-label={mode === 'immersive' ? '3D workspace' : '2D workspace'}>
-          {mode === 'immersive' ? (
+        <main className="viewport" aria-label={immersive ? '3D workspace' : '2D workspace'}>
+          {immersive ? (
             <Suspense fallback={null}>
               <Scene />
             </Suspense>
@@ -57,6 +61,7 @@ export default function App() {
       </div>
       <StatusBar />
       <CommandPalette />
+      <SettingsPanel />
     </div>
   )
 }

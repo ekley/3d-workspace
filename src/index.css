@@ -10,7 +10,7 @@
   /* text */
   --text-0: #e8edf5;
   --text-1: #9aa4b8;
-  --text-2: #5d6678;
+  --text-2: #768096;
 
   /* accents */
   --accent: #22d3ee;
@@ -1726,6 +1726,7 @@ button {
 .cal-overlay,
 .profile-overlay,
 .projects-overlay,
+.settings-overlay,
 .pal-overlay,
 .workspace-overlay {
   animation: fade-in 0.16s ease-out;
@@ -1737,6 +1738,7 @@ button {
 .cal-overlay > .panel,
 .profile-overlay > .panel,
 .projects-overlay > .panel,
+.settings-overlay > .panel,
 .pal,
 .workspace-overlay > .panel {
   animation: pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -2072,7 +2074,8 @@ button {
   .cal-overlay,
   .profile-overlay,
   .projects-overlay,
-  .workspace-overlay {
+  .workspace-overlay,
+  .settings-overlay {
     place-items: stretch;
   }
 
@@ -2081,7 +2084,8 @@ button {
   .cal-panel,
   .profile-panel,
   .projects-panel,
-  .workspace {
+  .workspace,
+  .settings-panel {
     width: 100%;
     max-height: none;
     height: 100%;
@@ -2118,4 +2122,132 @@ button {
   .dash-title {
     font-size: 19px;
   }
+}
+
+/* ============ Accessibility (Phase 16) ============ */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ============ Settings panel ============ */
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 6, 10, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.settings-panel {
+  width: min(440px, 92%);
+  max-height: 86vh;
+  overflow: auto;
+}
+
+.settings-body {
+  padding: 8px 18px 18px;
+}
+
+.setting-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.setting-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.setting-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-0);
+}
+
+.setting-desc {
+  font-size: 11px;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+.switch {
+  width: 40px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  position: relative;
+  flex: none;
+  transition: background 0.15s;
+}
+
+.switch .knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--text-1);
+  transition: transform 0.18s, background 0.18s;
+}
+
+.switch.on {
+  background: var(--accent-dim);
+  border-color: rgba(34, 211, 238, 0.4);
+}
+
+.switch.on .knob {
+  transform: translateX(18px);
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.setting-block {
+  padding: 14px 0;
+}
+
+.seg {
+  display: flex;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.seg-btn {
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-1);
+  border: 1px solid var(--border);
+}
+
+.seg-btn:hover {
+  color: var(--text-0);
+}
+
+.seg-btn.active {
+  color: var(--accent);
+  border-color: rgba(34, 211, 238, 0.4);
+  background: var(--accent-dim);
 }

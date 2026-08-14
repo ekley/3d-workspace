@@ -4,11 +4,14 @@ import { useWorkspace } from '../state/workspace'
 export function TopBar() {
   const user = useWorkspace((s) => s.user)
   const mode = useWorkspace((s) => s.mode)
+  const disable3D = useWorkspace((s) => s.settings.disable3D)
   const setMode = useWorkspace((s) => s.setMode)
+  const updateSettings = useWorkspace((s) => s.updateSettings)
   const setProfileOpen = useWorkspace((s) => s.setProfileOpen)
   const setCommandOpen = useWorkspace((s) => s.setCommandOpen)
+  const setSettingsOpen = useWorkspace((s) => s.setSettingsOpen)
   const pct = Math.round((user.xp / user.xpToNext) * 100)
-  const productivity = mode === 'productivity'
+  const productivity = mode === 'productivity' || disable3D
 
   return (
     <header className="hud">
@@ -33,7 +36,14 @@ export function TopBar() {
           className="icon-btn"
           aria-label={productivity ? 'Switch to 3D immersive mode' : 'Switch to 2D productivity mode'}
           title={productivity ? 'Switch to 3D immersive mode' : 'Switch to 2D productivity mode'}
-          onClick={() => setMode(productivity ? 'immersive' : 'productivity')}
+          onClick={() => {
+            if (productivity) {
+              setMode('immersive')
+              updateSettings({ disable3D: false })
+            } else {
+              setMode('productivity')
+            }
+          }}
         >
           <Icon name={productivity ? 'layers' : 'monitor'} size={18} />
         </button>
@@ -41,7 +51,7 @@ export function TopBar() {
           <Icon name="bell" size={18} />
           <span className="dot" />
         </button>
-        <button className="icon-btn" aria-label="Settings">
+        <button className="icon-btn" aria-label="Settings" onClick={() => setSettingsOpen(true)}>
           <Icon name="settings" size={18} />
         </button>
         <button className="user-chip" aria-label="User profile" onClick={() => setProfileOpen(true)}>

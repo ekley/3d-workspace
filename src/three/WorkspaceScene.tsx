@@ -17,8 +17,9 @@ function useTier() {
 
 function Parallax({ children }: { children: ReactNode }) {
   const ref = useRef<Group>(null)
+  const reduced = useWorkspace((s) => s.settings.reducedMotion)
   useFrame((state) => {
-    if (!ref.current) return
+    if (!ref.current || reduced) return
     const { x, y } = state.pointer
     ref.current.rotation.y = MathUtils.lerp(ref.current.rotation.y, x * 0.1, 0.04)
     ref.current.rotation.x = MathUtils.lerp(ref.current.rotation.x, -y * 0.05, 0.04)
@@ -36,6 +37,7 @@ function CoreHub() {
   const reaction = useRef(0)
   const corePulse = useWorkspace((s) => s.corePulse)
   const low = useTier()
+  const reduced = useWorkspace((s) => s.settings.reducedMotion)
 
   useEffect(() => {
     reaction.current = 1
@@ -46,23 +48,24 @@ function CoreHub() {
     idle.current = (idle.current + delta) % (Math.PI * 2)
     reaction.current = Math.max(0, reaction.current - delta * 2.2)
 
-    const speed = 0.3 + activity * 0.8 + reaction.current * 1.5
+    const speed = reduced ? 0 : 0.3 + activity * 0.8 + reaction.current * 1.5
     if (core.current) {
       core.current.rotation.y += delta * speed
-      core.current.rotation.x += delta * (0.12 + activity * 0.18)
+      core.current.rotation.x += delta * (reduced ? 0 : 0.12 + activity * 0.18)
     }
-    if (shell.current) shell.current.rotation.y -= delta * (0.14 + activity * 0.1)
+    if (shell.current) shell.current.rotation.y -= delta * (reduced ? 0 : 0.14 + activity * 0.1)
 
     if (glow.current) {
-      glow.current.emissiveIntensity =
-        1.2 + Math.sin(idle.current * 1.5) * 0.3 + activity * 1.2 + reaction.current * 2.6
+      glow.current.emissiveIntensity = reduced
+        ? 1.4 + activity * 0.6
+        : 1.2 + Math.sin(idle.current * 1.5) * 0.3 + activity * 1.2 + reaction.current * 2.6
     }
     if (group.current) {
-      const s = 1 + activity * 0.06 + reaction.current * 0.16
+      const s = 1 + activity * 0.06 + (reduced ? 0 : reaction.current * 0.16)
       group.current.scale.setScalar(s)
     }
     if (light.current) {
-      light.current.intensity = 7 + activity * 8 + reaction.current * 20
+      light.current.intensity = reduced ? 7 + activity * 5 : 7 + activity * 8 + reaction.current * 20
     }
   })
 
@@ -90,8 +93,9 @@ function ZoneRing({ radius, tilt = 0, speed = 0.1, color = '#22d3ee', opacity = 
   opacity?: number
 }) {
   const ref = useRef<Mesh>(null)
+  const reduced = useWorkspace((s) => s.settings.reducedMotion)
   useFrame((_, delta) => {
-    if (ref.current) ref.current.rotation.z += delta * speed
+    if (ref.current && !reduced) ref.current.rotation.z += delta * speed
   })
   return (
     <mesh ref={ref} rotation={[Math.PI / 2 + tilt, 0, 0]} position={[0, 0.4, 0]}>
@@ -103,6 +107,7 @@ function ZoneRing({ radius, tilt = 0, speed = 0.1, color = '#22d3ee', opacity = 
 
 function Platform() {
   const low = useTier()
+  const reduced = useWorkspace((s) => s.settings.reducedMotion)
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]}>
@@ -113,7 +118,7 @@ function Platform() {
         <ringGeometry args={[4.6, 4.66, 96]} />
         <meshBasicMaterial color="#22d3ee" transparent opacity={0.35} />
       </mesh>
-      {!low && (
+      {!low && !reduced && (
         <ContactShadows position={[0, 0.01, 0]} opacity={0.5} scale={14} blur={2.4} far={6} color="#000000" />
       )}
     </group>
@@ -122,6 +127,7 @@ function Platform() {
 
 export function WorkspaceScene() {
   const low = useTier()
+  const reduced = useWorkspace((s) => s.settings.reducedMotion)
   return (
     <>
       <ambientLight intensity={0.45} />
@@ -140,8 +146,12 @@ export function WorkspaceScene() {
         <CalendarTimeline />
       </Parallax>
 
-      <Stars radius={60} depth={40} count={low ? 220 : 900} factor={3.2} saturation={0} fade speed={0.4} />
-      <Sparkles count={low ? 30 : 140} scale={16} size={1.6} speed={0.2} color="#9aa4b8" opacity={0.4} />
+      {!reduced && (
+        <>
+          <Stars radius={60} depth={40} count={low ? 220 : 900} factor={3.2} saturation={0} fade speed={0.4} />
+          <Sparkles count={low ? 30 : 140} scale={16} size={1.6} speed={0.2} color="#9aa4b8" opacity={0.4} />
+        </>
+      )}
 
       <CameraRig />
     </>

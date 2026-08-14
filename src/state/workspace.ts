@@ -45,6 +45,8 @@ export type Quality = 'auto' | 'low' | 'high'
 
 export interface Settings {
   quality: Quality
+  disable3D: boolean
+  reducedMotion: boolean
 }
 
 interface WorkspaceState {
@@ -70,7 +72,9 @@ interface WorkspaceState {
   // taskId → { from orbit pos, startedAt } for the fly-to-core animation
   completedFx: Record<string, { from: [number, number, number]; at: number }>
   settings: Settings
+  settingsOpen: boolean
   setMode: (mode: Mode) => void
+  setSettingsOpen: (open: boolean) => void
   updateSettings: (patch: Partial<Settings>) => void
   setNav: (id: string) => void
   selectProject: (id: string | null) => void
@@ -108,9 +112,17 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   activityLevel: 0,
   corePulse: 0,
   completedFx: {},
-  settings: { quality: 'auto' },
+  settings: {
+    quality: 'auto',
+    disable3D: false,
+    reducedMotion:
+      typeof window !== 'undefined' &&
+      !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,
+  },
+  settingsOpen: false,
 
   setMode: (mode) => set({ mode }),
+  setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
   updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
   setNav: (activeNav) => set({ activeNav }),
   selectProject: (selectedProjectId) => set({ selectedProjectId }),
