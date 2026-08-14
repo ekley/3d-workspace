@@ -41,6 +41,12 @@ export interface NewTaskInput {
   estimate?: string
 }
 
+export type Quality = 'auto' | 'low' | 'high'
+
+export interface Settings {
+  quality: Quality
+}
+
 interface WorkspaceState {
   mode: Mode
   activeNav: string
@@ -63,7 +69,9 @@ interface WorkspaceState {
   corePulse: number
   // taskId → { from orbit pos, startedAt } for the fly-to-core animation
   completedFx: Record<string, { from: [number, number, number]; at: number }>
+  settings: Settings
   setMode: (mode: Mode) => void
+  updateSettings: (patch: Partial<Settings>) => void
   setNav: (id: string) => void
   selectProject: (id: string | null) => void
   focusProject: (id: string | null) => void
@@ -100,8 +108,10 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   activityLevel: 0,
   corePulse: 0,
   completedFx: {},
+  settings: { quality: 'auto' },
 
   setMode: (mode) => set({ mode }),
+  updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
   setNav: (activeNav) => set({ activeNav }),
   selectProject: (selectedProjectId) => set({ selectedProjectId }),
   focusProject: (focusedProjectId) =>

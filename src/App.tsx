@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { TopBar } from './components/TopBar'
 import { SideDock } from './components/SideDock'
 import { QuickActions } from './components/QuickActions'
@@ -11,9 +11,10 @@ import { ActivityPanel } from './components/ActivityPanel'
 import { FilePanel } from './components/FilePanel'
 import { CalendarPanel } from './components/CalendarPanel'
 import { GamificationPanel } from './components/GamificationPanel'
-import { Scene } from './three/Scene'
 import { CommandPalette } from './components/CommandPalette'
 import { useWorkspace } from './state/workspace'
+
+const Scene = lazy(() => import('./three/Scene').then((m) => ({ default: m.Scene })))
 
 export default function App() {
   const selectProject = useWorkspace((s) => s.selectProject)
@@ -37,7 +38,13 @@ export default function App() {
       <div className="stage">
         <SideDock />
         <main className="viewport" aria-label={mode === 'immersive' ? '3D workspace' : '2D workspace'}>
-          {mode === 'immersive' ? <Scene /> : <ProductivityDashboard />}
+          {mode === 'immersive' ? (
+            <Suspense fallback={null}>
+              <Scene />
+            </Suspense>
+          ) : (
+            <ProductivityDashboard />
+          )}
           <ProjectPanel />
           <ProjectsPanel />
           <TaskPanel />

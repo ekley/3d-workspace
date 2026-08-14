@@ -3,11 +3,17 @@ import { useFrame } from '@react-three/fiber'
 import { Stars, Sparkles, ContactShadows } from '@react-three/drei'
 import { Group, Mesh, MathUtils, PointLight, type MeshStandardMaterial } from 'three'
 import { useWorkspace } from '../state/workspace'
+import { isLowPower } from './perf'
 import { CameraRig } from './CameraRig'
 import { ProjectNodes } from './ProjectNodes'
 import { TaskNodes } from './TaskNodes'
 import { FileClusters } from './FileClusters'
 import { CalendarTimeline } from './CalendarTimeline'
+
+function useTier() {
+  const quality = useWorkspace((s) => s.settings.quality)
+  return quality === 'low' || (quality === 'auto' && isLowPower())
+}
 
 function Parallax({ children }: { children: ReactNode }) {
   const ref = useRef<Group>(null)
@@ -29,6 +35,7 @@ function CoreHub() {
   const idle = useRef(0)
   const reaction = useRef(0)
   const corePulse = useWorkspace((s) => s.corePulse)
+  const low = useTier()
 
   useEffect(() => {
     reaction.current = 1
@@ -70,7 +77,7 @@ function CoreHub() {
         <meshBasicMaterial color="#22d3ee" wireframe transparent opacity={0.16} />
       </mesh>
       <pointLight ref={light} color="#22d3ee" intensity={7} distance={14} decay={2} />
-      <Sparkles count={90} scale={5.5} size={2.2} speed={0.35} color="#22d3ee" opacity={0.55} />
+      <Sparkles count={low ? 20 : 90} scale={5.5} size={2.2} speed={0.35} color="#22d3ee" opacity={0.55} />
     </group>
   )
 }
@@ -95,6 +102,7 @@ function ZoneRing({ radius, tilt = 0, speed = 0.1, color = '#22d3ee', opacity = 
 }
 
 function Platform() {
+  const low = useTier()
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]}>
@@ -105,16 +113,19 @@ function Platform() {
         <ringGeometry args={[4.6, 4.66, 96]} />
         <meshBasicMaterial color="#22d3ee" transparent opacity={0.35} />
       </mesh>
-      <ContactShadows position={[0, 0.01, 0]} opacity={0.5} scale={14} blur={2.4} far={6} color="#000000" />
+      {!low && (
+        <ContactShadows position={[0, 0.01, 0]} opacity={0.5} scale={14} blur={2.4} far={6} color="#000000" />
+      )}
     </group>
   )
 }
 
 export function WorkspaceScene() {
+  const low = useTier()
   return (
     <>
       <ambientLight intensity={0.45} />
-      <directionalLight position={[10, 18, 8]} intensity={1.1} color="#bfd6ff" />
+      <directionalLight position={[10, 18, 8]} intensity={low ? 0.9 : 1.1} color="#bfd6ff" />
       <pointLight position={[-8, 4, -6]} intensity={30} color="#8b7cf6" distance={30} decay={2} />
 
       <Parallax>
@@ -129,8 +140,8 @@ export function WorkspaceScene() {
         <CalendarTimeline />
       </Parallax>
 
-      <Stars radius={60} depth={40} count={900} factor={3.2} saturation={0} fade speed={0.4} />
-      <Sparkles count={140} scale={16} size={1.6} speed={0.2} color="#9aa4b8" opacity={0.4} />
+      <Stars radius={60} depth={40} count={low ? 220 : 900} factor={3.2} saturation={0} fade speed={0.4} />
+      <Sparkles count={low ? 30 : 140} scale={16} size={1.6} speed={0.2} color="#9aa4b8" opacity={0.4} />
 
       <CameraRig />
     </>
