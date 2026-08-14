@@ -4,6 +4,8 @@ import { SideDock } from './components/SideDock'
 import { QuickActions } from './components/QuickActions'
 import { StatusBar } from './components/StatusBar'
 import { ProjectPanel } from './components/ProjectPanel'
+import { ProjectsPanel } from './components/ProjectsPanel'
+import { ProductivityDashboard } from './components/ProductivityDashboard'
 import { TaskPanel } from './components/TaskPanel'
 import { ActivityPanel } from './components/ActivityPanel'
 import { FilePanel } from './components/FilePanel'
@@ -16,6 +18,7 @@ import { useWorkspace } from './state/workspace'
 export default function App() {
   const selectProject = useWorkspace((s) => s.selectProject)
   const focusProject = useWorkspace((s) => s.focusProject)
+  const mode = useWorkspace((s) => s.mode)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -33,9 +36,10 @@ export default function App() {
       <TopBar />
       <div className="stage">
         <SideDock />
-        <main className="viewport" aria-label="3D workspace">
-          <Scene />
+        <main className="viewport" aria-label={mode === 'immersive' ? '3D workspace' : '2D workspace'}>
+          {mode === 'immersive' ? <Scene /> : <ProductivityDashboard />}
           <ProjectPanel />
+          <ProjectsPanel />
           <TaskPanel />
           <ActivityPanel />
           <FilePanel />
