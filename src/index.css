@@ -1994,3 +1994,128 @@ button {
   gap: 12px;
   align-content: start;
 }
+
+/* ============ Responsive recomposition (Phase 14) ============ */
+/* Tablet: keep the 3D scene but declutter floating labels and collapse
+   the productivity dashboard to a two-column grid. */
+@media (max-width: 1024px) {
+  .pnode-label,
+  .fcluster-label {
+    display: none;
+  }
+
+  .dash-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dash-projects {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Mobile: recompose — 3D hero behind a bottom nav dock, quick actions
+   top-right, and 2D modules open as full-screen surfaces. */
+@media (max-width: 760px) {
+  .hud {
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .identity {
+    min-width: auto;
+  }
+
+  .identity-sub {
+    display: none;
+  }
+
+  .search {
+    max-width: none;
+  }
+
+  .hud-right {
+    gap: 4px;
+  }
+
+  .dash {
+    padding: 16px 14px 96px;
+  }
+
+  .dash-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dash-stats {
+    width: 100%;
+  }
+
+  .dash-stat {
+    flex: 1;
+  }
+
+  .dash-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-projects {
+    grid-column: auto;
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .task-overlay,
+  .activity-overlay,
+  .file-overlay,
+  .cal-overlay,
+  .profile-overlay,
+  .projects-overlay,
+  .workspace-overlay {
+    place-items: stretch;
+  }
+
+  .task-panel,
+  .file-panel,
+  .cal-panel,
+  .profile-panel,
+  .projects-panel,
+  .workspace {
+    width: 100%;
+    max-height: none;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+
+  .project-panel-wrap {
+    right: 8px;
+    top: auto;
+    bottom: 70px;
+    transform: none;
+  }
+
+  .project-panel {
+    width: min(92vw, 320px);
+  }
+}
+
+/* Small mobile: strip the HUD down to essentials. */
+@media (max-width: 480px) {
+  .search {
+    display: none;
+  }
+
+  .user-meta {
+    display: none;
+  }
+
+  .status .right {
+    display: none;
+  }
+
+  .dash-title {
+    font-size: 19px;
+  }
+}
