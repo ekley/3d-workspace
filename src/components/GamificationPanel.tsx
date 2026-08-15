@@ -42,7 +42,7 @@ export function GamificationPanel() {
       <section className="panel profile-panel">
         <header className="tp-head">
           <div className="prof-head">
-            <span className="avatar prof-avatar">{user.initials}</span>
+            <span className="avatar prof-avatar"><img src={user.avatar} alt={`${user.name} avatar`} /></span>
             <div>
               <div className="tp-title">{user.name}</div>
               <div className="tp-sub">

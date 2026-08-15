@@ -7,6 +7,7 @@ export interface User {
   name: string
   handle: string
   initials: string
+  avatar: string
   title: string
   location: string
   level: number

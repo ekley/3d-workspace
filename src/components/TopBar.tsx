@@ -55,7 +55,7 @@ export function TopBar() {
           <Icon name="settings" size={18} />
         </button>
         <button className="user-chip" aria-label="User profile" onClick={() => setProfileOpen(true)}>
-          <span className="avatar">{user.initials}</span>
+          <span className="avatar"><img src={user.avatar} alt={`${user.name} avatar`} /></span>
           <span className="user-meta">
             <span className="name">{user.name}</span>
             <span className="xp-pill">

@@ -1,9 +1,13 @@
 import type { ActivityEvent, CalendarEvent, FileItem, Project, Task, User } from './types'
 
+// Self-contained SVG portrait (no network fetch) so the avatar always renders.
+const AVATAR_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#8b7cf6"/></linearGradient></defs><rect width="64" height="64" fill="url(#g)"/><circle cx="32" cy="25" r="11" fill="#0b1220" fill-opacity="0.9"/><path d="M13 60c0-12 8.5-19 19-19s19 7 19 19z" fill="#0b1220" fill-opacity="0.9"/></svg>`
+
 export const USER: User = {
   name: 'Elena Voss',
   handle: 'evoss',
   initials: 'EV',
+  avatar: `data:image/svg+xml,${encodeURIComponent(AVATAR_SVG)}`,
   title: 'Lead Product Engineer',
   location: 'Remote · GMT+1',
   level: 27,
