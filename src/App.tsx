@@ -13,6 +13,7 @@ import { FilePanel } from './components/FilePanel'
 import { CalendarPanel } from './components/CalendarPanel'
 import { GamificationPanel } from './components/GamificationPanel'
 import { CommandPalette } from './components/CommandPalette'
+import { LevelUpToast } from './components/LevelUpToast'
 import { useWorkspace } from './state/workspace'
 
 const Scene = lazy(() => import('./three/Scene').then((m) => ({ default: m.Scene })))
@@ -62,6 +63,7 @@ export default function App() {
       <StatusBar />
       <CommandPalette />
       <SettingsPanel />
+      <LevelUpToast />
     </div>
   )
 }

@@ -2260,3 +2260,49 @@ button {
   border-color: rgba(34, 211, 238, 0.4);
   background: var(--accent-dim);
 }
+
+/* ============ Micro-interactions (Phase 18) ============ */
+.icon-btn .dot {
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.82);
+  }
+}
+
+.levelup-toast {
+  position: fixed;
+  top: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 120;
+  padding: 10px 24px;
+  border: 1px solid rgba(34, 211, 238, 0.45);
+  border-radius: 12px;
+  background: var(--surface-solid);
+  text-align: center;
+  box-shadow: 0 0 28px rgba(34, 211, 238, 0.28), inset 0 0 12px rgba(34, 211, 238, 0.06);
+  animation: pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.levelup-title {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+.levelup-sub {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-1);
+}

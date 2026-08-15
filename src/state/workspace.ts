@@ -73,9 +73,11 @@ interface WorkspaceState {
   completedFx: Record<string, { from: [number, number, number]; at: number }>
   settings: Settings
   settingsOpen: boolean
+  levelUp: number | null
   setMode: (mode: Mode) => void
   setSettingsOpen: (open: boolean) => void
   updateSettings: (patch: Partial<Settings>) => void
+  clearLevelUp: () => void
   setNav: (id: string) => void
   selectProject: (id: string | null) => void
   focusProject: (id: string | null) => void
@@ -120,10 +122,12 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
       !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,
   },
   settingsOpen: false,
+  levelUp: null,
 
   setMode: (mode) => set({ mode }),
   setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
   updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
+  clearLevelUp: () => set({ levelUp: null }),
   setNav: (activeNav) => set({ activeNav }),
   selectProject: (selectedProjectId) => set({ selectedProjectId }),
   focusProject: (focusedProjectId) =>
@@ -175,6 +179,7 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
       activity: [...events, ...st.activity],
       activityLevel: 1,
       corePulse: st.corePulse + 1,
+      levelUp: level !== st.user.level ? level : st.levelUp,
       completedFx: { ...st.completedFx, [id]: { from, at: performance.now() } },
     }))
   },
