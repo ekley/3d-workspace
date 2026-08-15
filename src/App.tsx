@@ -14,6 +14,7 @@ import { CalendarPanel } from './components/CalendarPanel'
 import { GamificationPanel } from './components/GamificationPanel'
 import { CommandPalette } from './components/CommandPalette'
 import { LevelUpToast } from './components/LevelUpToast'
+import { StateNotice } from './components/StateNotice'
 import { useWorkspace } from './state/workspace'
 
 const Scene = lazy(() => import('./three/Scene').then((m) => ({ default: m.Scene })))
@@ -44,7 +45,13 @@ export default function App() {
         <SideDock />
         <main className="viewport" aria-label={immersive ? '3D workspace' : '2D workspace'}>
           {immersive ? (
-            <Suspense fallback={null}>
+            <Suspense
+              fallback={
+                <div className="stage-loading">
+                  <StateNotice tone="loading" title="Loading workspace…" />
+                </div>
+              }
+            >
               <Scene />
             </Suspense>
           ) : (

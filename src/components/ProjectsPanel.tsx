@@ -1,5 +1,6 @@
 import { useWorkspace } from '../state/workspace'
 import { Icon } from './icons'
+import { StateNotice } from './StateNotice'
 
 const STATUS_LABEL: Record<string, string> = {
   active: 'Active',
@@ -52,6 +53,7 @@ export function ProjectsPanel() {
               </span>
             </button>
           ))}
+          {projects.length === 0 && <StateNotice title="No projects yet." sub="Your first workspace will appear here." />}
         </div>
       </section>
     </div>

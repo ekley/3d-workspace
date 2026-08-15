@@ -1,5 +1,6 @@
 import { useWorkspace } from '../state/workspace'
 import { Icon } from './icons'
+import { StateNotice } from './StateNotice'
 
 const STATUS_LABEL: Record<string, string> = {
   active: 'Active',
@@ -17,13 +18,33 @@ export function ProjectPanel() {
   const immersive = useWorkspace((s) => s.mode === 'immersive' && !s.settings.disable3D)
 
   const project = projects.find((p) => p.id === (focusedId ?? selectedId))
-  if (!project) return null
-  const expanded = !!focusedId
 
   const close = () => {
     selectProject(null)
     focusProject(null)
   }
+
+  if (!project) {
+    if (!focusedId && !selectedId) return null
+    return (
+      <div className="project-panel-wrap">
+        <aside className="panel project-panel" role="dialog" aria-label="Project error">
+          <header className="pp-head">
+            <div className="pp-title">
+              <div>
+                <div className="pp-name">Project</div>
+              </div>
+            </div>
+            <button className="icon-btn" aria-label="Close" onClick={close}>
+              <Icon name="close" size={18} />
+            </button>
+          </header>
+          <StateNotice tone="error" title="Failed to load project." sub="This workspace is unavailable. It may have been removed." />
+        </aside>
+      </div>
+    )
+  }
+  const expanded = !!focusedId
 
   return (
     <div className={expanded ? 'workspace-overlay' : 'project-panel-wrap'}>

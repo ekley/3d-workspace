@@ -1,5 +1,6 @@
 import { useWorkspace } from '../state/workspace'
 import { Icon } from './icons'
+import { StateNotice } from './StateNotice'
 
 const STATUS_LABEL: Record<string, string> = {
   active: 'Active',
@@ -154,7 +155,7 @@ export function ProductivityDashboard() {
                 <span className={`prio prio-${t.priority}`}>{t.priority}</span>
               </div>
             ))}
-            {openTasks.length === 0 && <div className="tp-empty">No open tasks.</div>}
+            {openTasks.length === 0 && <StateNotice title="No open tasks." sub="Tasks you can pick up appear here." />}
           </div>
         </div>
 
@@ -185,7 +186,7 @@ export function ProductivityDashboard() {
                 {e.important && <span className="cal-dot" />}
               </div>
             ))}
-            {upcoming.length === 0 && <div className="tp-empty">No upcoming events.</div>}
+            {upcoming.length === 0 && <StateNotice title="No upcoming events." sub="Your next 5 days are clear." />}
           </div>
         </div>
 
@@ -209,7 +210,7 @@ export function ProductivityDashboard() {
                 <span className="activity-time">{a.time}</span>
               </div>
             ))}
-            {recentActivity.length === 0 && <div className="tp-empty">No activity yet.</div>}
+            {recentActivity.length === 0 && <StateNotice title="No activity." sub="Workspace events will appear here." />}
           </div>
         </div>
 
@@ -243,7 +244,7 @@ export function ProductivityDashboard() {
                 {f.projectId && <span className="file-proj">{projectOf(f.projectId)?.code}</span>}
               </div>
             ))}
-            {recentFiles.length === 0 && <div className="tp-empty">No files.</div>}
+            {recentFiles.length === 0 && <StateNotice title="No files." sub="Uploaded files will appear here." />}
           </div>
         </div>
       </section>

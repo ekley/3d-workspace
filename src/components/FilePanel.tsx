@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { FileCategory, FileItem } from '../data/types'
 import { useWorkspace } from '../state/workspace'
 import { Icon } from './icons'
+import { StateNotice } from './StateNotice'
 
 const CATS: { id: FileCategory | 'all'; label: string }[] = [
   { id: 'all', label: 'All' },
@@ -133,7 +134,7 @@ export function FilePanel() {
                 ))}
               </div>
             ))}
-            {filtered.length === 0 && <div className="tp-empty">No files match.</div>}
+            {filtered.length === 0 && <StateNotice title="No files match." sub="Try another category or search term." />}
           </div>
 
           {selected && (

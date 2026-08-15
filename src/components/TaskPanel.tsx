@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { Task, TaskStatus } from '../data/types'
 import { useWorkspace } from '../state/workspace'
 import { Icon } from './icons'
+import { StateNotice } from './StateNotice'
 
 const FILTERS: { id: string; label: string }[] = [
   { id: 'all', label: 'All' },
@@ -147,7 +148,7 @@ export function TaskPanel() {
                 </div>
               )
             })}
-            {filtered.length === 0 && <div className="tp-empty">No tasks in this view.</div>}
+            {filtered.length === 0 && <StateNotice title="No tasks in this view." sub="Change the filter or create a task." />}
           </div>
 
           {selected && (
