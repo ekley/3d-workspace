@@ -29,9 +29,10 @@ export function TaskPanel() {
   const completeTask = useWorkspace((s) => s.completeTask)
   const updateTask = useWorkspace((s) => s.updateTask)
   const createTask = useWorkspace((s) => s.createTask)
+  const showForm = useWorkspace((s) => s.taskFormOpen)
+  const setShowForm = useWorkspace((s) => s.setTaskFormOpen)
 
   const [filter, setFilter] = useState('all')
-  const [showForm, setShowForm] = useState(false)
   const [title, setTitle] = useState('')
   const [projectId, setProjectId] = useState(projects[0]?.id ?? '')
   const [priority, setPriority] = useState<Task['priority']>('medium')
@@ -80,7 +81,7 @@ export function TaskPanel() {
               </button>
             ))}
           </div>
-          <button className="tp-new" onClick={() => setShowForm((v) => !v)}>
+          <button className="tp-new" onClick={() => setShowForm(!showForm)}>
             <Icon name="plus" size={15} /> New task
           </button>
         </div>
@@ -184,7 +185,11 @@ export function TaskPanel() {
                     <button
                       key={st}
                       className={`tp-status-btn${selected.status === st ? ' active' : ''}`}
-                      onClick={() => updateTask(selected.id, { status: st })}
+                      onClick={() =>
+                        st === 'completed'
+                          ? completeTask(selected.id)
+                          : updateTask(selected.id, { status: st })
+                      }
                     >
                       {STATUS_LABEL[st]}
                     </button>

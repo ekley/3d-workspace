@@ -25,6 +25,7 @@ export default function App() {
   const mode = useWorkspace((s) => s.mode)
   const disable3D = useWorkspace((s) => s.settings.disable3D)
   const reducedMotion = useWorkspace((s) => s.settings.reducedMotion)
+  const focusMode = useWorkspace((s) => s.focusMode)
   const immersive = mode === 'immersive' && !disable3D
 
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function App() {
   }, [selectProject, focusProject])
 
   return (
-    <div className={`app${reducedMotion ? ' reduce-motion' : ''}`}>
+    <div className={`app${reducedMotion ? ' reduce-motion' : ''}${focusMode ? ' focus' : ''}`}>
       <TopBar />
       <div className="stage">
         <SideDock />

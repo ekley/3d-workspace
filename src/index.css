@@ -421,6 +421,12 @@ button {
   border: none;
 }
 
+.action-btn.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
 /* ============ 3D project node labels ============ */
 .pnode-label {
   min-width: 108px;
@@ -2131,6 +2137,23 @@ button {
   .dash-title {
     font-size: 19px;
   }
+}
+
+/* ============ Focus mode (Phase 20) ============ */
+.app.focus .hud,
+.app.focus .status,
+.app.focus .dock.left {
+  display: none;
+}
+
+.app.focus .stage {
+  grid-template-columns: 1fr auto;
+}
+
+.app.focus .actions {
+  align-self: center;
+  padding-bottom: 0;
+  padding-right: 14px;
 }
 
 /* ============ Accessibility (Phase 16) ============ */

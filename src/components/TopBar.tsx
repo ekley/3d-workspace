@@ -10,6 +10,7 @@ export function TopBar() {
   const setProfileOpen = useWorkspace((s) => s.setProfileOpen)
   const setCommandOpen = useWorkspace((s) => s.setCommandOpen)
   const setSettingsOpen = useWorkspace((s) => s.setSettingsOpen)
+  const setNav = useWorkspace((s) => s.setNav)
   const pct = Math.round((user.xp / user.xpToNext) * 100)
   const productivity = mode === 'productivity' || disable3D
 
@@ -25,7 +26,18 @@ export function TopBar() {
         </div>
       </div>
 
-      <div className="search" onClick={() => setCommandOpen(true)} role="button" tabIndex={0}>
+      <div
+        className="search"
+        onClick={() => setCommandOpen(true)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setCommandOpen(true)
+          }
+        }}
+      >
         <Icon name="search" size={16} />
         <input placeholder="Search workspace…" aria-label="Search workspace" readOnly />
         <span className="kbd">⌘K</span>
@@ -47,7 +59,7 @@ export function TopBar() {
         >
           <Icon name={productivity ? 'layers' : 'monitor'} size={18} />
         </button>
-        <button className="icon-btn" aria-label="Notifications">
+        <button className="icon-btn" aria-label="Notifications" onClick={() => setNav('activity')}>
           <Icon name="bell" size={18} />
           <span className="dot" />
         </button>

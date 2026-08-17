@@ -74,10 +74,14 @@ interface WorkspaceState {
   settings: Settings
   settingsOpen: boolean
   levelUp: number | null
+  taskFormOpen: boolean
+  focusMode: boolean
   setMode: (mode: Mode) => void
   setSettingsOpen: (open: boolean) => void
   updateSettings: (patch: Partial<Settings>) => void
   clearLevelUp: () => void
+  setTaskFormOpen: (open: boolean) => void
+  toggleFocusMode: () => void
   setNav: (id: string) => void
   selectProject: (id: string | null) => void
   focusProject: (id: string | null) => void
@@ -123,11 +127,15 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   },
   settingsOpen: false,
   levelUp: null,
+  taskFormOpen: false,
+  focusMode: false,
 
   setMode: (mode) => set({ mode }),
   setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
   updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
   clearLevelUp: () => set({ levelUp: null }),
+  setTaskFormOpen: (taskFormOpen) => set({ taskFormOpen }),
+  toggleFocusMode: () => set((s) => ({ focusMode: !s.focusMode })),
   setNav: (activeNav) => set({ activeNav }),
   selectProject: (selectedProjectId) => set({ selectedProjectId }),
   focusProject: (focusedProjectId) =>
@@ -199,7 +207,13 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
     set((st) => ({
       tasks: [...st.tasks, task],
       projects: st.projects.map((p) =>
-        p.id === input.projectId ? { ...p, taskCount: p.taskCount + 1 } : p,
+        p.id === input.projectId
+          ? {
+              ...p,
+              taskCount: p.taskCount + 1,
+              progress: Math.min(100, Math.round((p.doneCount / (p.taskCount + 1)) * 100)),
+            }
+          : p,
       ),
       activity: [ev('task-created', 'plus', 'TASK CREATED', input.title, 'info', input.projectId), ...st.activity],
       activityLevel: Math.min(1, st.activityLevel + 0.3),
@@ -221,7 +235,8 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
 // ponytail: one module-level timer decays the signal; enough for a single signal,
 // swap for a per-signal decay in the 3D loop if more signals appear.
 setInterval(() => {
-  useWorkspace.setState((s) => ({
-    activityLevel: s.activityLevel > 0 ? Math.max(0, s.activityLevel - 0.012) : 0,
-  }))
+  const s = useWorkspace.getState()
+  if (s.activityLevel > 0) {
+    useWorkspace.setState({ activityLevel: Math.max(0, s.activityLevel - 0.012) })
+  }
 }, 100)

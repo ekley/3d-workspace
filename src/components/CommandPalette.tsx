@@ -17,6 +17,7 @@ export function CommandPalette() {
   const tasks = useWorkspace((s) => s.tasks)
   const files = useWorkspace((s) => s.files)
   const setNav = useWorkspace((s) => s.setNav)
+  const setTaskFormOpen = useWorkspace((s) => s.setTaskFormOpen)
   const selectProject = useWorkspace((s) => s.selectProject)
   const selectTask = useWorkspace((s) => s.selectTask)
   const selectFile = useWorkspace((s) => s.selectFile)
@@ -58,7 +59,7 @@ export function CommandPalette() {
         { group: 'Navigate', label: 'Files', sub: 'File browser', icon: 'folder', run: () => { setNav('files'); close() } },
         { group: 'Navigate', label: 'Calendar', sub: 'Upcoming events', icon: 'calendar', run: () => { setNav('calendar'); close() } },
         { group: 'Navigate', label: 'Activity', sub: 'Event log', icon: 'activity', run: () => { setNav('activity'); close() } },
-        { group: 'Actions', label: 'Create task', sub: 'Open task board', icon: 'plus', run: () => { setNav('tasks'); close() } },
+        { group: 'Actions', label: 'Create task', sub: 'Open task board', icon: 'plus', run: () => { setNav('tasks'); setTaskFormOpen(true); close() } },
         { group: 'Actions', label: 'Open profile', sub: 'XP · missions · milestones', icon: 'zap', run: () => { setProfileOpen(true); close() } },
       )
       return out
@@ -103,7 +104,7 @@ export function CommandPalette() {
         label: `Create task "${query.trim()}"`,
         sub: 'Adds a backlog task',
         icon: 'plus',
-        run: () => { setNav('tasks'); close() },
+        run: () => { setNav('tasks'); setTaskFormOpen(true); close() },
       })
     }
     return out.slice(0, 14)
