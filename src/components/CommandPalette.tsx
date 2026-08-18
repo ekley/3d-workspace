@@ -122,8 +122,6 @@ export function CommandPalette() {
     } else if (e.key === 'Enter') {
       e.preventDefault()
       items[sel]?.run()
-    } else if (e.key === 'Escape') {
-      close()
     }
   }
 

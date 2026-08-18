@@ -160,6 +160,9 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
     const gain = task.priority === 'high' ? 60 : task.priority === 'medium' ? 40 : 25
     const from = taskOrbitPosition(s.tasks, s.projects, task.projectId, id) ?? [0, 0.6, 0]
 
+    const project = s.projects.find((p) => p.id === task.projectId)
+    const ships = !!project && project.doneCount + 1 >= project.taskCount
+
     let { level, xp, xpToNext } = s.user
     xp += gain
     const events: ActivityEvent[] = []
@@ -170,6 +173,9 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
       events.push(ev('level-up', 'zap', 'LEVEL UP', `Reached level ${level}`, 'success'))
     }
     events.push(ev('task-completed', 'check', 'TASK COMPLETED', `${task.title} · +${gain} XP`, 'success', task.projectId))
+    if (ships) {
+      events.push(ev('milestone', 'check', 'PROJECT SHIPPED', `${project?.name ?? 'Project'} · all tasks complete`, 'success', task.projectId))
+    }
 
     set((st) => ({
       tasks: st.tasks.map((t) => (t.id === id ? { ...t, status: 'completed' as const } : t)),
@@ -179,6 +185,7 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
               ...p,
               doneCount: p.doneCount + 1,
               progress: Math.min(100, Math.round(((p.doneCount + 1) / p.taskCount) * 100)),
+              status: p.doneCount + 1 >= p.taskCount ? 'completed' : p.status,
               lastActivity: `Just now · ${task.title} completed`,
             }
           : p,
@@ -212,6 +219,7 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
               ...p,
               taskCount: p.taskCount + 1,
               progress: Math.min(100, Math.round((p.doneCount / (p.taskCount + 1)) * 100)),
+              status: p.status === 'completed' ? 'active' : p.status,
             }
           : p,
       ),

@@ -881,6 +881,14 @@ button {
   flex: 1;
 }
 
+/* When no detail is selected, let the list span the full width instead of
+   leaving an empty 280px column. */
+.tp-body > :only-child {
+  grid-column: 1 / -1;
+  border-right: none;
+  border-bottom: none;
+}
+
 .tp-list {
   overflow: auto;
   padding: 8px;

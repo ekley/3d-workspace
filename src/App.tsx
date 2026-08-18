@@ -20,8 +20,6 @@ import { useWorkspace } from './state/workspace'
 const Scene = lazy(() => import('./three/Scene').then((m) => ({ default: m.Scene })))
 
 export default function App() {
-  const selectProject = useWorkspace((s) => s.selectProject)
-  const focusProject = useWorkspace((s) => s.focusProject)
   const mode = useWorkspace((s) => s.mode)
   const disable3D = useWorkspace((s) => s.settings.disable3D)
   const reducedMotion = useWorkspace((s) => s.settings.reducedMotion)
@@ -30,14 +28,24 @@ export default function App() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        selectProject(null)
-        focusProject(null)
+      if (e.key !== 'Escape') return
+      const s = useWorkspace.getState()
+      if (s.commandOpen) {
+        s.setCommandOpen(false)
+      } else if (s.settingsOpen) {
+        s.setSettingsOpen(false)
+      } else if (s.profileOpen) {
+        s.setProfileOpen(false)
+      } else if (s.activeNav !== 'overview') {
+        s.setNav('overview')
+      } else {
+        s.selectProject(null)
+        s.focusProject(null)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [selectProject, focusProject])
+  }, [])
 
   return (
     <div className={`app${reducedMotion ? ' reduce-motion' : ''}${focusMode ? ' focus' : ''}`}>
