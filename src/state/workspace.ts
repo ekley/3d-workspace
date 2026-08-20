@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { ActivityEvent, CalendarEvent, FileCategory, FileItem, Project, Task, User } from '../data/types'
 import { ACTIVITY, EVENTS, FILES, PROJECTS, TASKS, USER } from '../data/mock'
 import { taskOrbitPosition } from '../three/layout'
+import { playFocusDoneSound, playFocusStartSound, playLevelUpSound, playTaskCompleteSound } from '../sound/audio'
 
 export type Mode = 'immersive' | 'productivity'
 
@@ -47,6 +48,16 @@ export interface Settings {
   quality: Quality
   disable3D: boolean
   reducedMotion: boolean
+  soundEnabled: boolean
+}
+
+export interface FocusTimer {
+  active: boolean
+  running: boolean
+  mode: 'work' | 'break'
+  durationSec: number
+  remainingSec: number
+  projectId?: string
 }
 
 interface WorkspaceState {
@@ -76,12 +87,19 @@ interface WorkspaceState {
   levelUp: number | null
   taskFormOpen: boolean
   focusMode: boolean
+  focusModalOpen: boolean
+  focusTimer: FocusTimer
   setMode: (mode: Mode) => void
   setSettingsOpen: (open: boolean) => void
   updateSettings: (patch: Partial<Settings>) => void
   clearLevelUp: () => void
   setTaskFormOpen: (open: boolean) => void
   toggleFocusMode: () => void
+  setFocusModalOpen: (open: boolean) => void
+  startFocusTimer: (minutes: number, mode?: 'work' | 'break', projectId?: string) => void
+  pauseFocusTimer: () => void
+  resumeFocusTimer: () => void
+  stopFocusTimer: () => void
   setNav: (id: string) => void
   selectProject: (id: string | null) => void
   focusProject: (id: string | null) => void
@@ -121,6 +139,7 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   settings: {
     quality: 'auto',
     disable3D: false,
+    soundEnabled: true,
     reducedMotion:
       typeof window !== 'undefined' &&
       !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,
@@ -129,6 +148,14 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   levelUp: null,
   taskFormOpen: false,
   focusMode: false,
+  focusModalOpen: false,
+  focusTimer: {
+    active: false,
+    running: false,
+    mode: 'work',
+    durationSec: 25 * 60,
+    remainingSec: 25 * 60,
+  },
 
   setMode: (mode) => set({ mode }),
   setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
@@ -136,6 +163,41 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   clearLevelUp: () => set({ levelUp: null }),
   setTaskFormOpen: (taskFormOpen) => set({ taskFormOpen }),
   toggleFocusMode: () => set((s) => ({ focusMode: !s.focusMode })),
+  setFocusModalOpen: (focusModalOpen) => set({ focusModalOpen }),
+
+  startFocusTimer: (minutes, mode = 'work', projectId) => {
+    const s = useWorkspace.getState()
+    const sec = Math.max(1, Math.round(minutes * 60))
+    if (s.settings.soundEnabled) playFocusStartSound()
+    set({
+      focusTimer: {
+        active: true,
+        running: true,
+        mode,
+        durationSec: sec,
+        remainingSec: sec,
+        projectId,
+      },
+      activityLevel: 1,
+      corePulse: s.corePulse + 1,
+    })
+  },
+
+  pauseFocusTimer: () =>
+    set((st) => ({ focusTimer: { ...st.focusTimer, running: false } })),
+
+  resumeFocusTimer: () =>
+    set((st) => ({ focusTimer: { ...st.focusTimer, running: true } })),
+
+  stopFocusTimer: () =>
+    set((st) => ({
+      focusTimer: {
+        ...st.focusTimer,
+        active: false,
+        running: false,
+        remainingSec: st.focusTimer.durationSec,
+      },
+    })),
   setNav: (activeNav) => set({ activeNav }),
   selectProject: (selectedProjectId) => set({ selectedProjectId }),
   focusProject: (focusedProjectId) =>
@@ -166,7 +228,8 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
     let { level, xp, xpToNext } = s.user
     xp += gain
     const events: ActivityEvent[] = []
-    if (xp >= xpToNext) {
+    const isLevelUp = xp >= xpToNext
+    if (isLevelUp) {
       xp -= xpToNext
       level += 1
       xpToNext = Math.round(xpToNext * 1.15)
@@ -175,6 +238,11 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
     events.push(ev('task-completed', 'check', 'TASK COMPLETED', `${task.title} · +${gain} XP`, 'success', task.projectId))
     if (ships) {
       events.push(ev('milestone', 'check', 'PROJECT SHIPPED', `${project?.name ?? 'Project'} · all tasks complete`, 'success', task.projectId))
+    }
+
+    if (s.settings.soundEnabled) {
+      if (isLevelUp) playLevelUpSound()
+      else playTaskCompleteSound()
     }
 
     set((st) => ({
@@ -240,11 +308,71 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
     }),
 }))
 
-// ponytail: one module-level timer decays the signal; enough for a single signal,
-// swap for a per-signal decay in the 3D loop if more signals appear.
+// ponytail: module timers for activity decay (100ms) and focus sprint ticking (1s)
 setInterval(() => {
   const s = useWorkspace.getState()
   if (s.activityLevel > 0) {
     useWorkspace.setState({ activityLevel: Math.max(0, s.activityLevel - 0.012) })
   }
 }, 100)
+
+setInterval(() => {
+  const s = useWorkspace.getState()
+  const { focusTimer, user, settings } = s
+  if (!focusTimer.active || !focusTimer.running) return
+
+  if (focusTimer.remainingSec > 1) {
+    useWorkspace.setState({
+      focusTimer: { ...focusTimer, remainingSec: focusTimer.remainingSec - 1 },
+    })
+  } else {
+    // Focus sprint / break completed!
+    const isWork = focusTimer.mode === 'work'
+    const gain = isWork ? 75 : 15
+    const proj = focusTimer.projectId ? s.projects.find((p) => p.id === focusTimer.projectId) : undefined
+    const durationMin = Math.round(focusTimer.durationSec / 60)
+    
+    let { level, xp, xpToNext } = user
+    xp += gain
+    const events: ActivityEvent[] = []
+    const isLevelUp = xp >= xpToNext
+    if (isLevelUp) {
+      xp -= xpToNext
+      level += 1
+      xpToNext = Math.round(xpToNext * 1.15)
+      events.push(ev('level-up', 'zap', 'LEVEL UP', `Reached level ${level}`, 'success'))
+    }
+
+    events.push(
+      ev(
+        'focus-complete',
+        'zap',
+        isWork ? 'FOCUS SPRINT COMPLETE' : 'BREAK COMPLETE',
+        isWork
+          ? `${durationMin}m sprint completed${proj ? ` · ${proj.name}` : ''} · +${gain} XP`
+          : `${durationMin}m break ended · +${gain} XP`,
+        'success',
+        focusTimer.projectId,
+      ),
+    )
+
+    if (settings.soundEnabled) {
+      if (isLevelUp) playLevelUpSound()
+      else playFocusDoneSound()
+    }
+
+    useWorkspace.setState({
+      focusTimer: {
+        ...focusTimer,
+        active: false,
+        running: false,
+        remainingSec: 0,
+      },
+      user: { ...user, level, xp, xpToNext },
+      activity: [...events, ...s.activity],
+      activityLevel: 1,
+      corePulse: s.corePulse + 1,
+      levelUp: isLevelUp ? level : s.levelUp,
+    })
+  }
+}, 1000)

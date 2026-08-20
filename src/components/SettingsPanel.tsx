@@ -48,6 +48,21 @@ export function SettingsPanel() {
           <button
             className="setting-row"
             role="switch"
+            aria-checked={settings.soundEnabled}
+            onClick={() => update({ soundEnabled: !settings.soundEnabled })}
+          >
+            <span className="setting-text">
+              <span className="setting-label">Sound FX</span>
+              <span className="setting-desc">Procedural Web Audio cyber feedback for tasks, XP and timer.</span>
+            </span>
+            <span className={`switch${settings.soundEnabled ? ' on' : ''}`}>
+              <span className="knob" />
+            </span>
+          </button>
+
+          <button
+            className="setting-row"
+            role="switch"
             aria-checked={settings.reducedMotion}
             onClick={() => update({ reducedMotion: !settings.reducedMotion })}
           >

@@ -12,6 +12,7 @@ import { ActivityPanel } from './components/ActivityPanel'
 import { FilePanel } from './components/FilePanel'
 import { CalendarPanel } from './components/CalendarPanel'
 import { GamificationPanel } from './components/GamificationPanel'
+import { FocusModal } from './components/FocusModal'
 import { CommandPalette } from './components/CommandPalette'
 import { LevelUpToast } from './components/LevelUpToast'
 import { StateNotice } from './components/StateNotice'
@@ -32,6 +33,8 @@ export default function App() {
       const s = useWorkspace.getState()
       if (s.commandOpen) {
         s.setCommandOpen(false)
+      } else if (s.focusModalOpen) {
+        s.setFocusModalOpen(false)
       } else if (s.settingsOpen) {
         s.setSettingsOpen(false)
       } else if (s.profileOpen) {
@@ -78,6 +81,7 @@ export default function App() {
       </div>
       <StatusBar />
       <CommandPalette />
+      <FocusModal />
       <SettingsPanel />
       <LevelUpToast />
     </div>

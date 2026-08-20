@@ -4,6 +4,8 @@ import { useWorkspace } from '../state/workspace'
 export function QuickActions() {
   const setNav = useWorkspace((s) => s.setNav)
   const setTaskFormOpen = useWorkspace((s) => s.setTaskFormOpen)
+  const setFocusModalOpen = useWorkspace((s) => s.setFocusModalOpen)
+  const focusTimer = useWorkspace((s) => s.focusTimer)
   const focusMode = useWorkspace((s) => s.focusMode)
   const toggleFocusMode = useWorkspace((s) => s.toggleFocusMode)
 
@@ -19,6 +21,14 @@ export function QuickActions() {
         }}
       >
         <Icon name="plus" size={20} />
+      </button>
+      <button
+        className={`action-btn${focusTimer.active ? ' active' : ''}`}
+        aria-label="Focus protocol"
+        title="Focus protocol"
+        onClick={() => setFocusModalOpen(true)}
+      >
+        <Icon name="clock" size={19} />
       </button>
       <button className="action-btn" aria-label="Files" title="Files" onClick={() => setNav('files')}>
         <Icon name="folder" size={19} />

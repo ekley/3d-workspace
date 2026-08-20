@@ -18,6 +18,12 @@ export function CommandPalette() {
   const files = useWorkspace((s) => s.files)
   const setNav = useWorkspace((s) => s.setNav)
   const setTaskFormOpen = useWorkspace((s) => s.setTaskFormOpen)
+  const setFocusModalOpen = useWorkspace((s) => s.setFocusModalOpen)
+  const startFocusTimer = useWorkspace((s) => s.startFocusTimer)
+  const stopFocusTimer = useWorkspace((s) => s.stopFocusTimer)
+  const focusTimer = useWorkspace((s) => s.focusTimer)
+  const settings = useWorkspace((s) => s.settings)
+  const updateSettings = useWorkspace((s) => s.updateSettings)
   const selectProject = useWorkspace((s) => s.selectProject)
   const selectTask = useWorkspace((s) => s.selectTask)
   const selectFile = useWorkspace((s) => s.selectFile)
@@ -59,9 +65,22 @@ export function CommandPalette() {
         { group: 'Navigate', label: 'Files', sub: 'File browser', icon: 'folder', run: () => { setNav('files'); close() } },
         { group: 'Navigate', label: 'Calendar', sub: 'Upcoming events', icon: 'calendar', run: () => { setNav('calendar'); close() } },
         { group: 'Navigate', label: 'Activity', sub: 'Event log', icon: 'activity', run: () => { setNav('activity'); close() } },
+        { group: 'Actions', label: 'Start Focus Sprint (25m)', sub: 'Deep work timer', icon: 'zap', run: () => { startFocusTimer(25); close() } },
+        { group: 'Actions', label: 'Start Quick Sprint (15m)', sub: 'Rapid burst focus', icon: 'zap', run: () => { startFocusTimer(15); close() } },
+        { group: 'Actions', label: 'Focus Protocol', sub: 'Configure focus sprint', icon: 'clock', run: () => { setFocusModalOpen(true); close() } },
         { group: 'Actions', label: 'Create task', sub: 'Open task board', icon: 'plus', run: () => { setNav('tasks'); setTaskFormOpen(true); close() } },
         { group: 'Actions', label: 'Open profile', sub: 'XP · missions · milestones', icon: 'zap', run: () => { setProfileOpen(true); close() } },
+        { group: 'Actions', label: settings.soundEnabled ? 'Mute Audio FX' : 'Enable Audio FX', sub: 'Procedural Web Audio synthesizer', icon: settings.soundEnabled ? 'volume-x' : 'volume', run: () => { updateSettings({ soundEnabled: !settings.soundEnabled }); close() } },
       )
+      if (focusTimer.active) {
+        out.unshift({
+          group: 'Focus Protocol',
+          label: 'Stop Focus Timer',
+          sub: 'Cancel active focus session',
+          icon: 'rotate',
+          run: () => { stopFocusTimer(); close() },
+        })
+      }
       return out
     }
     const hit = (s: string) => s.toLowerCase().includes(q)

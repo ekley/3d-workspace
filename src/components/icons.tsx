@@ -25,6 +25,12 @@ const PATHS: Record<string, string> = {
   maximize: 'M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3',
   monitor: 'M3 5h18v12H3zM9 21h6M12 17v4',
   file: 'M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6zm0 0v6h6',
+  play: 'M5 3l14 9-14 9V3z',
+  pause: 'M6 4h4v16H6zM14 4h4v16h-4z',
+  clock: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4v6l4 2',
+  volume: 'M11 5L6 9H2v6h4l5 4V5zm4.5 3.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14',
+  'volume-x': 'M11 5L6 9H2v6h4l5 4V5zm12 4l-6 6m0-6l6 6',
+  rotate: 'M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15',
 }
 
 export function Icon({ name, size = 18 }: IconProps) {

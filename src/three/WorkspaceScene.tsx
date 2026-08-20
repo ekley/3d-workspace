@@ -36,6 +36,8 @@ function CoreHub() {
   const idle = useRef(0)
   const reaction = useRef(0)
   const corePulse = useWorkspace((s) => s.corePulse)
+  const focusActive = useWorkspace((s) => s.focusTimer.active)
+  const focusRunning = useWorkspace((s) => s.focusTimer.running)
   const low = useTier()
   const reduced = useWorkspace((s) => s.settings.reducedMotion)
 
@@ -48,39 +50,49 @@ function CoreHub() {
     idle.current = (idle.current + delta) % (Math.PI * 2)
     reaction.current = Math.max(0, reaction.current - delta * 2.2)
 
-    const speed = reduced ? 0 : 0.3 + activity * 0.8 + reaction.current * 1.5
+    const focusBoost = focusActive && focusRunning ? 0.6 : 0
+    const speed = reduced ? 0 : 0.3 + activity * 0.8 + reaction.current * 1.5 + focusBoost
     if (core.current) {
       core.current.rotation.y += delta * speed
-      core.current.rotation.x += delta * (reduced ? 0 : 0.12 + activity * 0.18)
+      core.current.rotation.x += delta * (reduced ? 0 : 0.12 + activity * 0.18 + focusBoost * 0.2)
     }
-    if (shell.current) shell.current.rotation.y -= delta * (reduced ? 0 : 0.14 + activity * 0.1)
+    if (shell.current) shell.current.rotation.y -= delta * (reduced ? 0 : 0.14 + activity * 0.1 + focusBoost * 0.3)
 
     if (glow.current) {
       glow.current.emissiveIntensity = reduced
-        ? 1.4 + activity * 0.6
-        : 1.2 + Math.sin(idle.current * 1.5) * 0.3 + activity * 1.2 + reaction.current * 2.6
+        ? 1.4 + activity * 0.6 + (focusActive ? 0.8 : 0)
+        : 1.2 + Math.sin(idle.current * 1.5) * 0.3 + activity * 1.2 + reaction.current * 2.6 + (focusActive ? 1.0 : 0)
     }
     if (group.current) {
-      const s = 1 + activity * 0.06 + (reduced ? 0 : reaction.current * 0.16)
+      const s = 1 + activity * 0.06 + (reduced ? 0 : reaction.current * 0.16) + (focusActive ? 0.08 : 0)
       group.current.scale.setScalar(s)
     }
     if (light.current) {
-      light.current.intensity = reduced ? 7 + activity * 5 : 7 + activity * 8 + reaction.current * 20
+      light.current.intensity = reduced ? 7 + activity * 5 : 7 + activity * 8 + reaction.current * 20 + (focusActive ? 12 : 0)
     }
   })
+
+  const coreColor = focusActive ? '#f59e0b' : '#22d3ee'
 
   return (
     <group ref={group} position={[0, 0.6, 0]}>
       <mesh ref={core}>
         <octahedronGeometry args={[1.1, 0]} />
-        <meshStandardMaterial ref={glow} color="#22d3ee" emissive="#22d3ee" emissiveIntensity={1.3} roughness={0.2} metalness={0.5} />
+        <meshStandardMaterial ref={glow} color={coreColor} emissive={coreColor} emissiveIntensity={1.3} roughness={0.2} metalness={0.5} />
       </mesh>
       <mesh ref={shell}>
         <icosahedronGeometry args={[1.9, 1]} />
-        <meshBasicMaterial color="#22d3ee" wireframe transparent opacity={0.16} />
+        <meshBasicMaterial color={coreColor} wireframe transparent opacity={focusActive ? 0.35 : 0.16} />
       </mesh>
-      <pointLight ref={light} color="#22d3ee" intensity={7} distance={14} decay={2} />
-      <Sparkles count={low ? 20 : 90} scale={5.5} size={2.2} speed={0.35} color="#22d3ee" opacity={0.55} />
+      <pointLight ref={light} color={coreColor} intensity={7} distance={14} decay={2} />
+      <Sparkles
+        count={low ? 20 : focusActive ? 140 : 90}
+        scale={5.5}
+        size={focusActive ? 3.0 : 2.2}
+        speed={focusActive ? 0.7 : 0.35}
+        color={coreColor}
+        opacity={0.65}
+      />
     </group>
   )
 }
