@@ -70,7 +70,7 @@ function EventNode({ ev, index }: { ev: CalendarEvent; index: number }) {
           </mesh>
         )}
         {hovered && (
-          <Html center position={[0, 0.32, 0]} distanceFactor={16} zIndexRange={[20, 0]}>
+          <Html center position={[0, 0.32, 0]} distanceFactor={16} zIndexRange={[5, 0]}>
             <div className="tnode-label">
               {ev.time} · {ev.title}
             </div>
@@ -103,7 +103,7 @@ export function CalendarTimeline() {
             <boxGeometry args={[0.02, 0.22, 0.02]} />
             <meshBasicMaterial color="#22d3ee" transparent opacity={0.5} />
           </mesh>
-          <Html center position={[0, -0.45, 0]} distanceFactor={14} zIndexRange={[20, 0]}>
+          <Html center position={[0, -0.45, 0]} distanceFactor={14} zIndexRange={[5, 0]}>
             <div className="day-label">{d.id}</div>
           </Html>
         </group>

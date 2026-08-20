@@ -61,7 +61,7 @@ function TaskNode({ task }: { task: Task }) {
           />
         </mesh>
         {hovered && (
-          <Html center position={[0, 0.35, 0]} distanceFactor={22} zIndexRange={[20, 0]}>
+          <Html center position={[0, 0.35, 0]} distanceFactor={22} zIndexRange={[5, 0]}>
             <div className="tnode-label">{task.title}</div>
           </Html>
         )}

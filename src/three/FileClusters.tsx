@@ -71,7 +71,7 @@ function Cluster({ cat }: { cat: (typeof CATEGORIES)[number] }) {
         </mesh>
       </group>
 
-      <Html center position={[0, 0.72, 0]} distanceFactor={10} zIndexRange={[20, 0]}>
+      <Html center position={[0, 0.72, 0]} distanceFactor={10} zIndexRange={[5, 0]}>
         <div className="fcluster-label">
           <div className="fcluster-name">{cat.label}</div>
           <div className="fcluster-count">{count} files</div>

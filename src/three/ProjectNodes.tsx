@@ -76,7 +76,7 @@ function ProjectNode({ project, index, total }: { project: Project; index: numbe
         </mesh>
       </group>
 
-      <Html center position={[0, 1.15, 0]} distanceFactor={11} zIndexRange={[20, 0]}>
+      <Html center position={[0, 1.15, 0]} distanceFactor={11} zIndexRange={[5, 0]}>
         <div className={`pnode-label${selected ? ' selected' : ''}`}>
           <div className="pnode-head">
             <span className="pnode-name">{project.name}</span>
