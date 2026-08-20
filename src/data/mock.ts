@@ -174,7 +174,7 @@ export const EVENTS: CalendarEvent[] = [
   { id: 'evt-4', title: '1:1 with Sam', date: 'Mar 18', day: 'TUE', time: '16:00', duration: '30m', participants: ['Elena', 'Sam'], location: 'Zoom', important: false },
   { id: 'evt-5', title: 'Vault security sync', date: 'Mar 19', day: 'WED', time: '10:00', duration: '1h', projectId: 'vault', participants: ['Sam', 'Priya', 'Elena'], location: 'Meet', important: true },
   { id: 'evt-6', title: 'Pulse retro', date: 'Mar 19', day: 'WED', time: '15:30', duration: '1h', projectId: 'pulse', participants: ['Elena', 'Leo', 'Mina', 'Priya'], location: 'Meet', important: false },
-  { id: 'evt-7', title: 'Vault release deadline', date: 'Mar 20', day: 'THU', time: '17:00', duration: '—', projectId: 'vault', participants: [], location: 'Deadline', important: true },
+  { id: 'evt-7', title: 'Vault release deadline', date: 'Mar 20', day: 'THU', time: '17:00', duration: '-', projectId: 'vault', participants: [], location: 'Deadline', important: true },
   { id: 'evt-8', title: 'Company all-hands', date: 'Mar 20', day: 'THU', time: '12:00', duration: '45m', participants: ['Everyone'], location: 'Town hall', important: false },
   { id: 'evt-9', title: 'Drift design sign-off', date: 'Mar 21', day: 'FRI', time: '10:30', duration: '1h', projectId: 'drift', participants: ['Mina', 'Elena'], location: 'Meet', important: true },
   { id: 'evt-10', title: 'Atlas demo prep', date: 'Mar 21', day: 'FRI', time: '14:00', duration: '1h', projectId: 'atlas', participants: ['Kira', 'Elena'], location: 'Studio', important: false },

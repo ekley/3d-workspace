@@ -2038,7 +2038,7 @@ button {
   }
 }
 
-/* Mobile: recompose — 3D hero behind a bottom nav dock, quick actions
+/* Mobile: recompose: 3D hero behind a bottom nav dock, quick actions
    top-right, and 2D modules open as full-screen surfaces. */
 @media (max-width: 760px) {
   .hud {

@@ -75,12 +75,12 @@ export function CalendarPanel() {
               <div className="tp-detail-title">{selected.title}</div>
               <div className="tp-detail-meta">
                 {selected.date} · {selected.time}
-                {selected.duration !== '—' ? ` · ${selected.duration}` : ''}
+                {selected.duration !== '-' ? ` · ${selected.duration}` : ''}
               </div>
               <div className="tp-detail-grid">
                 <div className="tp-detail-cell">
                   <span className="pp-stat-label">Project</span>
-                  <span>{projectOf(selected.projectId)?.name ?? '—'}</span>
+                  <span>{projectOf(selected.projectId)?.name ?? '-'}</span>
                 </div>
                 <div className="tp-detail-cell">
                   <span className="pp-stat-label">Location</span>
@@ -88,7 +88,7 @@ export function CalendarPanel() {
                 </div>
                 <div className="tp-detail-cell" style={{ gridColumn: '1 / -1' }}>
                   <span className="pp-stat-label">Participants</span>
-                  <span>{selected.participants.length ? selected.participants.join(', ') : '—'}</span>
+                  <span>{selected.participants.length ? selected.participants.join(', ') : '-'}</span>
                 </div>
               </div>
               {selected.important && (

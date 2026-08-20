@@ -161,7 +161,7 @@ export function FilePanel() {
                 </div>
                 <div className="tp-detail-cell">
                   <span className="pp-stat-label">Project</span>
-                  <span>{projectOf(selected.projectId)?.name ?? '—'}</span>
+                  <span>{projectOf(selected.projectId)?.name ?? '-'}</span>
                 </div>
               </div>
             </aside>

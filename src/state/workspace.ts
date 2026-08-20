@@ -77,7 +77,7 @@ interface WorkspaceState {
   selectedEventId: string | null
   profileOpen: boolean
   commandOpen: boolean
-  // workspace activity signal (0..1) — drives core reactivity
+  // workspace activity signal (0..1): drives core reactivity
   activityLevel: number
   corePulse: number
   // taskId → { from orbit pos, startedAt } for the fly-to-core animation

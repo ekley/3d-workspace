@@ -175,7 +175,7 @@ export function TaskPanel() {
                 </div>
                 <div className="tp-detail-cell">
                   <span className="pp-stat-label">Tags</span>
-                  <span>{selected.tags.join(', ') || '—'}</span>
+                  <span>{selected.tags.join(', ') || '-'}</span>
                 </div>
               </div>
               <div className="tp-detail-actions">
