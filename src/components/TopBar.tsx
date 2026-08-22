@@ -14,6 +14,8 @@ export function TopBar() {
   const setCommandOpen = useWorkspace((s) => s.setCommandOpen)
   const setSettingsOpen = useWorkspace((s) => s.setSettingsOpen)
   const setNav = useWorkspace((s) => s.setNav)
+  const terminalOpen = useWorkspace((s) => s.terminalOpen)
+  const toggleTerminal = useWorkspace((s) => s.toggleTerminal)
   const pct = Math.round((user.xp / user.xpToNext) * 100)
   const productivity = mode === 'productivity' || disable3D
 
@@ -90,6 +92,14 @@ export function TopBar() {
         <button className="icon-btn" aria-label="Notifications" onClick={() => setNav('activity')}>
           <Icon name="bell" size={18} />
           <span className="dot" />
+        </button>
+        <button
+          className={`icon-btn${terminalOpen ? ' active' : ''}`}
+          aria-label="Toggle terminal"
+          title="Toggle terminal"
+          onClick={toggleTerminal}
+        >
+          <Icon name="terminal" size={18} />
         </button>
         <button className="icon-btn" aria-label="Settings" onClick={() => setSettingsOpen(true)}>
           <Icon name="settings" size={18} />

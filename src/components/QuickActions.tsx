@@ -8,6 +8,8 @@ export function QuickActions() {
   const focusTimer = useWorkspace((s) => s.focusTimer)
   const focusMode = useWorkspace((s) => s.focusMode)
   const toggleFocusMode = useWorkspace((s) => s.toggleFocusMode)
+  const terminalOpen = useWorkspace((s) => s.terminalOpen)
+  const toggleTerminal = useWorkspace((s) => s.toggleTerminal)
 
   return (
     <div className="actions" aria-label="Quick actions">
@@ -32,6 +34,14 @@ export function QuickActions() {
       </button>
       <button className="action-btn" aria-label="Files" title="Files" onClick={() => setNav('files')}>
         <Icon name="folder" size={19} />
+      </button>
+      <button
+        className={`action-btn${terminalOpen ? ' active' : ''}`}
+        aria-label="Terminal"
+        title="Terminal"
+        onClick={toggleTerminal}
+      >
+        <Icon name="terminal" size={19} />
       </button>
       <button
         className={`action-btn${focusMode ? ' active' : ''}`}
