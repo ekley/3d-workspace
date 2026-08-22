@@ -77,6 +77,7 @@ interface WorkspaceState {
   selectedEventId: string | null
   profileOpen: boolean
   commandOpen: boolean
+  terminalOpen: boolean
   // workspace activity signal (0..1): drives core reactivity
   activityLevel: number
   corePulse: number
@@ -96,6 +97,8 @@ interface WorkspaceState {
   setTaskFormOpen: (open: boolean) => void
   toggleFocusMode: () => void
   setFocusModalOpen: (open: boolean) => void
+  setTerminalOpen: (open: boolean) => void
+  toggleTerminal: () => void
   startFocusTimer: (minutes: number, mode?: 'work' | 'break', projectId?: string) => void
   pauseFocusTimer: () => void
   resumeFocusTimer: () => void
@@ -133,6 +136,7 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   selectedEventId: null,
   profileOpen: false,
   commandOpen: false,
+  terminalOpen: false,
   activityLevel: 0,
   corePulse: 0,
   completedFx: {},
@@ -164,6 +168,8 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   setTaskFormOpen: (taskFormOpen) => set({ taskFormOpen }),
   toggleFocusMode: () => set((s) => ({ focusMode: !s.focusMode })),
   setFocusModalOpen: (focusModalOpen) => set({ focusModalOpen }),
+  setTerminalOpen: (terminalOpen) => set({ terminalOpen }),
+  toggleTerminal: () => set((s) => ({ terminalOpen: !s.terminalOpen })),
 
   startFocusTimer: (minutes, mode = 'work', projectId) => {
     const s = useWorkspace.getState()

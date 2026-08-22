@@ -133,3 +133,77 @@ export function playFocusDoneSound() {
     osc.stop(startTime + 0.45)
   })
 }
+
+export function playTerminalKeypress() {
+  const ctx = getAudioContext()
+  if (!ctx) return
+  const now = ctx.currentTime
+  const osc = ctx.createOscillator()
+  const gain = ctx.createGain()
+
+  osc.type = 'sine'
+  const randFreq = 1600 + Math.random() * 400
+  osc.frequency.setValueAtTime(randFreq, now)
+  osc.frequency.exponentialRampToValueAtTime(800, now + 0.015)
+
+  gain.gain.setValueAtTime(0.008, now)
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.015)
+
+  osc.connect(gain)
+  gain.connect(ctx.destination)
+
+  osc.start(now)
+  osc.stop(now + 0.02)
+}
+
+export function playTerminalSuccess() {
+  const ctx = getAudioContext()
+  if (!ctx) return
+  const now = ctx.currentTime
+  const notes = [659.25, 987.77, 1318.51] // E5, B5, E6
+
+  notes.forEach((freq, idx) => {
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    const startTime = now + idx * 0.05
+
+    osc.type = 'sine'
+    osc.frequency.setValueAtTime(freq, startTime)
+
+    gain.gain.setValueAtTime(0.001, startTime)
+    gain.gain.linearRampToValueAtTime(0.04, startTime + 0.015)
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.15)
+
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+
+    osc.start(startTime)
+    osc.stop(startTime + 0.2)
+  })
+}
+
+export function playTerminalError() {
+  const ctx = getAudioContext()
+  if (!ctx) return
+  const now = ctx.currentTime
+  const beeps = [0, 0.08]
+
+  beeps.forEach((delay) => {
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    const startTime = now + delay
+
+    osc.type = 'sawtooth'
+    osc.frequency.setValueAtTime(120, startTime)
+
+    gain.gain.setValueAtTime(0.001, startTime)
+    gain.gain.linearRampToValueAtTime(0.03, startTime + 0.01)
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.06)
+
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+
+    osc.start(startTime)
+    osc.stop(startTime + 0.07)
+  })
+}
