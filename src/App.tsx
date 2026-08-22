@@ -14,6 +14,7 @@ import { CalendarPanel } from './components/CalendarPanel'
 import { GamificationPanel } from './components/GamificationPanel'
 import { FocusModal } from './components/FocusModal'
 import { CommandPalette } from './components/CommandPalette'
+import { CyberTerminal } from './components/CyberTerminal'
 import { LevelUpToast } from './components/LevelUpToast'
 import { StateNotice } from './components/StateNotice'
 import { useWorkspace } from './state/workspace'
@@ -29,9 +30,17 @@ export default function App() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return
       const s = useWorkspace.getState()
-      if (s.commandOpen) {
+      if ((e.ctrlKey || e.metaKey) && e.key === '`') {
+        e.preventDefault()
+        s.toggleTerminal()
+        return
+      }
+      
+      if (e.key !== 'Escape') return
+      if (s.terminalOpen) {
+        s.setTerminalOpen(false)
+      } else if (s.commandOpen) {
         s.setCommandOpen(false)
       } else if (s.focusModalOpen) {
         s.setFocusModalOpen(false)
@@ -83,6 +92,7 @@ export default function App() {
       <CommandPalette />
       <FocusModal />
       <SettingsPanel />
+      <CyberTerminal />
       <LevelUpToast />
     </div>
   )

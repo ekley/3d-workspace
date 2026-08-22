@@ -29,6 +29,7 @@ export function CommandPalette() {
   const selectFile = useWorkspace((s) => s.selectFile)
   const selectCategory = useWorkspace((s) => s.selectCategory)
   const setProfileOpen = useWorkspace((s) => s.setProfileOpen)
+  const setTerminalOpen = useWorkspace((s) => s.setTerminalOpen)
 
   const [query, setQuery] = useState('')
   const [sel, setSel] = useState(0)
@@ -70,6 +71,7 @@ export function CommandPalette() {
         { group: 'Actions', label: 'Focus Protocol', sub: 'Configure focus sprint', icon: 'clock', run: () => { setFocusModalOpen(true); close() } },
         { group: 'Actions', label: 'Create task', sub: 'Open task board', icon: 'plus', run: () => { setNav('tasks'); setTaskFormOpen(true); close() } },
         { group: 'Actions', label: 'Open profile', sub: 'XP · missions · milestones', icon: 'zap', run: () => { setProfileOpen(true); close() } },
+        { group: 'Actions', label: 'Open Terminal', sub: 'Cybernetic command line console', icon: 'terminal', run: () => { setTerminalOpen(true); close() } },
         { group: 'Actions', label: settings.soundEnabled ? 'Mute Audio FX' : 'Enable Audio FX', sub: 'Procedural Web Audio synthesizer', icon: settings.soundEnabled ? 'volume-x' : 'volume', run: () => { updateSettings({ soundEnabled: !settings.soundEnabled }); close() } },
       )
       if (focusTimer.active) {
