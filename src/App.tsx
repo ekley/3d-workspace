@@ -11,6 +11,7 @@ import { TaskPanel } from './components/TaskPanel'
 import { ActivityPanel } from './components/ActivityPanel'
 import { FilePanel } from './components/FilePanel'
 import { CalendarPanel } from './components/CalendarPanel'
+import { NotePanel } from './components/NotePanel'
 import { GamificationPanel } from './components/GamificationPanel'
 import { FocusModal } from './components/FocusModal'
 import { CommandPalette } from './components/CommandPalette'
@@ -48,6 +49,8 @@ export default function App() {
         s.setSettingsOpen(false)
       } else if (s.profileOpen) {
         s.setProfileOpen(false)
+      } else if (s.selectedNoteId) {
+        s.selectNote(null)
       } else if (s.activeNav !== 'overview') {
         s.setNav('overview')
       } else {
@@ -84,6 +87,7 @@ export default function App() {
           <ActivityPanel />
           <FilePanel />
           <CalendarPanel />
+          <NotePanel />
           <GamificationPanel />
         </main>
         <QuickActions />
