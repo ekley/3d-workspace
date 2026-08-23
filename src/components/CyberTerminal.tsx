@@ -22,6 +22,9 @@ export function CyberTerminal() {
   const focusTimer = useWorkspace((s) => s.focusTimer)
   const startFocusTimer = useWorkspace((s) => s.startFocusTimer)
   const completeTask = useWorkspace((s) => s.completeTask)
+  const notes = useWorkspace((s) => s.notes)
+  const createNote = useWorkspace((s) => s.createNote)
+  const deleteNote = useWorkspace((s) => s.deleteNote)
   
   const soundEnabled = useWorkspace((s) => s.settings.soundEnabled)
   const updateSettings = useWorkspace((s) => s.updateSettings)
@@ -167,6 +170,10 @@ export function CyberTerminal() {
         print('projects                - Database of all projects', 'output')
         print('tasks [proj_code]       - List tasks (e.g. tasks ATL)', 'output')
         print('complete <task_id>      - Set task completed (e.g. complete atl-1)', 'output')
+        print('notes [proj_code]       - List all notes shards', 'output')
+        print('note-view <note_id>     - Display note content details', 'output')
+        print('note-create <title>     - Create general note shard', 'output')
+        print('note-delete <note_id>   - Delete note shard', 'output')
         print('focus <mins> [proj]     - Initiate focus timer (e.g. focus 25 atl)', 'output')
         print('xp <amount>             - Award debugging level XP', 'output')
         print('sound <on|off>          - Toggle synthesizers', 'output')
@@ -361,6 +368,89 @@ export function CyberTerminal() {
         if (isLevelUp) {
           print(`LEVEL UP: Promoted to Level ${level}!`, 'success')
         }
+        break
+      }
+
+      case 'notes': {
+        const codeFilter = args[1]?.toLowerCase()
+        print('NOTES REGISTRY //', 'system')
+        print('------------------------------------------------', 'system')
+        
+        let targetProjId: string | undefined = undefined
+        if (codeFilter) {
+          const target = projects.find((p) => p.code.toLowerCase() === codeFilter)
+          if (!target) {
+            print(`Error: project code "${args[1]}" not found.`, 'error')
+            success = false
+            break
+          }
+          targetProjId = target.id
+        }
+
+        const list = targetProjId ? notes.filter((n) => n.projectId === targetProjId) : notes
+        if (list.length === 0) {
+          print('No notes matching search parameters.', 'output')
+        } else {
+          list.forEach((n) => {
+            const proj = projects.find((p) => p.id === n.projectId)
+            print(`[${n.id}] (${n.category.toUpperCase()}) : ${n.title} [${proj?.code ?? 'GENERAL'}]`, 'output')
+          })
+        }
+        break
+      }
+
+      case 'note-view': {
+        const noteId = args[1]
+        if (!noteId) {
+          print('Usage: note-view <note_id> (e.g. note-view n-1)', 'error')
+          success = false
+          break
+        }
+        const note = notes.find((n) => n.id.toLowerCase() === noteId.toLowerCase())
+        if (!note) {
+          print(`Error: Note "${noteId}" not found.`, 'error')
+          success = false
+          break
+        }
+        const proj = projects.find((p) => p.id === note.projectId)
+        print(`NOTE: ${note.title} //`, 'system')
+        print(`ID: ${note.id} | CATEGORY: ${note.category.toUpperCase()} | PROJECT: ${proj?.name ?? 'GENERAL'}`, 'system')
+        print('------------------------------------------------', 'system')
+        note.content.split('\n').forEach((line) => print(line, 'output'))
+        break
+      }
+
+      case 'note-create': {
+        const title = args.slice(1).join(' ')
+        if (!title) {
+          print('Usage: note-create <note title> (e.g. note-create Setup steps)', 'error')
+          success = false
+          break
+        }
+        createNote({
+          title,
+          content: 'Created via CLI console.',
+          category: 'general',
+        })
+        print(`SUCCESS: Created note shard: "${title}"! +10 XP awarded.`, 'success')
+        break
+      }
+
+      case 'note-delete': {
+        const noteId = args[1]
+        if (!noteId) {
+          print('Usage: note-delete <note_id> (e.g. note-delete n-1)', 'error')
+          success = false
+          break
+        }
+        const note = notes.find((n) => n.id.toLowerCase() === noteId.toLowerCase())
+        if (!note) {
+          print(`Error: Note "${noteId}" not found.`, 'error')
+          success = false
+          break
+        }
+        deleteNote(note.id)
+        print(`SUCCESS: Deleted note shard [${note.id}] : "${note.title}".`, 'success')
         break
       }
 

@@ -30,6 +30,8 @@ export function CommandPalette() {
   const selectCategory = useWorkspace((s) => s.selectCategory)
   const setProfileOpen = useWorkspace((s) => s.setProfileOpen)
   const setTerminalOpen = useWorkspace((s) => s.setTerminalOpen)
+  const notes = useWorkspace((s) => s.notes)
+  const selectNote = useWorkspace((s) => s.selectNote)
 
   const [query, setQuery] = useState('')
   const [sel, setSel] = useState(0)
@@ -64,6 +66,7 @@ export function CommandPalette() {
       out.push(
         { group: 'Navigate', label: 'Tasks', sub: '2D task board', icon: 'check', run: () => { setNav('tasks'); close() } },
         { group: 'Navigate', label: 'Files', sub: 'File browser', icon: 'folder', run: () => { setNav('files'); close() } },
+        { group: 'Navigate', label: 'Notes', sub: 'Spatial data shards & logs', icon: 'file', run: () => { setNav('notes'); close() } },
         { group: 'Navigate', label: 'Calendar', sub: 'Upcoming events', icon: 'calendar', run: () => { setNav('calendar'); close() } },
         { group: 'Navigate', label: 'Activity', sub: 'Event log', icon: 'activity', run: () => { setNav('activity'); close() } },
         { group: 'Actions', label: 'Start Focus Sprint (25m)', sub: 'Deep work timer', icon: 'zap', run: () => { startFocusTimer(25); close() } },
@@ -119,6 +122,17 @@ export function CommandPalette() {
         })
       }
     }
+    for (const n of notes) {
+      if (hit(n.title) || hit(n.content)) {
+        out.push({
+          group: 'Notes',
+          label: n.title,
+          sub: `${n.category.toUpperCase()} · ${(n.projectId ? projectOf(n.projectId) : undefined)?.name ?? 'General'}`,
+          icon: 'file',
+          run: () => { selectNote(n.id); setNav('notes'); close() },
+        })
+      }
+    }
     if (out.length === 0) {
       out.push({
         group: 'Actions',
@@ -129,7 +143,7 @@ export function CommandPalette() {
       })
     }
     return out.slice(0, 14)
-  }, [query, projects, tasks, files])
+  }, [query, projects, tasks, files, notes, settings, focusTimer])
 
   if (!open) return null
 
