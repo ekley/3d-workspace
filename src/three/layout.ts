@@ -26,3 +26,14 @@ export function taskOrbitPosition(
   const angle = (ti / Math.max(1, projectTasks.length)) * Math.PI * 2
   return [px + Math.cos(angle) * 1.15, py + 0.15, pz + Math.sin(angle) * 1.15]
 }
+
+/** Orbit position of a note shard around the core. index out of total. */
+export function notePosition(
+  index: number,
+  total: number,
+  radius = 5.2,
+): [number, number, number] {
+  const angle = (index / Math.max(1, total)) * Math.PI * 2 + Math.PI / 4
+  return [Math.cos(angle) * radius, 1.4, Math.sin(angle) * radius]
+}
+

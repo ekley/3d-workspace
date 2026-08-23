@@ -1751,6 +1751,7 @@ button {
 .projects-overlay,
 .settings-overlay,
 .pal-overlay,
+.notes-overlay,
 .workspace-overlay {
   animation: fade-in 0.16s ease-out;
 }
@@ -1759,6 +1760,7 @@ button {
 .activity-overlay > .panel,
 .file-overlay > .panel,
 .cal-overlay > .panel,
+.notes-overlay > .panel,
 .profile-overlay > .panel,
 .projects-overlay > .panel,
 .settings-overlay > .panel,
@@ -2786,5 +2788,329 @@ button {
   font-size: 13px;
   caret-color: var(--accent);
 }
+
+.notes-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 5, 8, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 40px;
+}
+
+.notes-overlay > .panel {
+  width: 100%;
+  max-width: 1100px;
+  height: 100%;
+  max-height: 720px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom Notes styles */
+.np-search-container {
+  display: flex;
+  align-items: center;
+  background: rgba(10, 15, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 0 10px;
+  margin-right: 12px;
+  flex: 1;
+  max-width: 320px;
+  height: 32px;
+}
+
+.np-search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-0);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  margin-left: 8px;
+  width: 100%;
+}
+
+.np-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 12px;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.note-cat-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 5px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  margin-right: 8px;
+  letter-spacing: 0.05em;
+}
+
+.note-cat-spec {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.note-cat-idea {
+  color: #d946ef;
+  background: rgba(217, 70, 239, 0.1);
+}
+
+.note-cat-log {
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.1);
+}
+
+.note-cat-general {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+/* New note creator form */
+.np-form {
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slide-in-top 0.2s ease-out;
+}
+
+.np-form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.np-title-input {
+  flex: 1;
+  background: rgba(8, 10, 16, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 0 12px;
+  color: var(--text-0);
+  font-size: 14px;
+  height: 36px;
+  outline: none;
+}
+
+.np-title-input:focus {
+  border-color: var(--accent);
+}
+
+.np-form select {
+  background: rgba(8, 10, 16, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 0 10px;
+  color: var(--text-1);
+  font-size: 13px;
+  height: 36px;
+  outline: none;
+  cursor: pointer;
+}
+
+.np-form select option {
+  background: #0f172a;
+  color: var(--text-1);
+}
+
+.np-content-textarea {
+  background: rgba(8, 10, 16, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 10px 12px;
+  color: var(--text-1);
+  font-size: 13px;
+  line-height: 1.5;
+  outline: none;
+  resize: vertical;
+  font-family: var(--font-mono);
+}
+
+.np-content-textarea:focus {
+  border-color: var(--accent);
+  color: var(--text-0);
+}
+
+.np-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.tp-cancel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-2);
+  border-radius: 4px;
+  padding: 0 16px;
+  font-size: 13px;
+  height: 32px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.tp-cancel:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-1);
+}
+
+/* Detail view / Editor area */
+.np-detail {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.np-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 16px;
+}
+
+.np-editor-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 16px;
+}
+
+.np-edit-title-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-0);
+  font-size: 18px;
+  font-weight: 600;
+  width: 100%;
+}
+
+.np-meta-dropdowns {
+  display: flex;
+  gap: 12px;
+}
+
+.np-meta-dropdowns select {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: var(--text-2);
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.np-meta-dropdowns select option {
+  background: #0f172a;
+  color: var(--text-1);
+}
+
+.np-editor-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 240px;
+}
+
+.np-edit-content-textarea {
+  flex: 1;
+  background: rgba(8, 10, 16, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  padding: 12px;
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  outline: none;
+  resize: none;
+}
+
+.np-edit-content-textarea:focus {
+  border-color: rgba(34, 211, 238, 0.3);
+  color: var(--text-0);
+  background: rgba(8, 10, 16, 0.5);
+}
+
+.np-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.np-btn-save {
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  color: var(--accent);
+  border-radius: 4px;
+  padding: 0 16px;
+  font-size: 13px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  font-weight: 500;
+}
+
+.np-btn-save:hover {
+  background: rgba(34, 211, 238, 0.18);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.2);
+}
+
+.np-btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.np-btn-delete {
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.22);
+  color: #f43f5e;
+  border-radius: 4px;
+  padding: 0 16px;
+  font-size: 13px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.np-btn-delete:hover {
+  background: rgba(244, 63, 94, 0.15);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+}
+
+@keyframes slide-in-top {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+  .notes-overlay {
+    padding: 12px;
+  }
+}
+
 
 
