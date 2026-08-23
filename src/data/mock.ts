@@ -1,4 +1,4 @@
-import type { ActivityEvent, CalendarEvent, FileItem, Project, Task, User } from './types'
+import type { ActivityEvent, CalendarEvent, FileItem, Project, Task, User, Note } from './types'
 
 // Self-contained SVG portrait (no network fetch) so the avatar always renders.
 const AVATAR_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#8b7cf6"/></linearGradient></defs><rect width="64" height="64" fill="url(#g)"/><circle cx="32" cy="25" r="11" fill="#0b1220" fill-opacity="0.9"/><path d="M13 60c0-12 8.5-19 19-19s19 7 19 19z" fill="#0b1220" fill-opacity="0.9"/></svg>`
@@ -180,4 +180,46 @@ export const EVENTS: CalendarEvent[] = [
   { id: 'evt-10', title: 'Atlas demo prep', date: 'Mar 21', day: 'FRI', time: '14:00', duration: '1h', projectId: 'atlas', participants: ['Kira', 'Elena'], location: 'Studio', important: false },
   { id: 'evt-11', title: 'Week review', date: 'Mar 21', day: 'FRI', time: '16:00', duration: '30m', participants: ['Elena'], location: 'Focus', important: false },
   { id: 'evt-12', title: 'Vault key rotation (prod)', date: 'Mar 24', day: 'MON', time: '09:00', duration: '2h', projectId: 'vault', participants: ['Sam'], location: 'Ops bridge', important: true },
+]
+
+export const NOTES: Note[] = [
+  {
+    id: 'n-1',
+    projectId: 'atlas',
+    title: 'Telemetry Query Builder Specs',
+    category: 'spec',
+    content: 'Implement query compilation to target the ClickHouse dialect.\nEnsure all queries have an explicit time-range boundary to prevent full-table scans.\nCache compiled query execution plans for 5 minutes in memory.',
+    updatedAt: '2h ago',
+  },
+  {
+    id: 'n-2',
+    projectId: 'helios',
+    title: 'Design Token Contrast Audit Checklist',
+    category: 'idea',
+    content: 'Review all semantic color mappings against WCAG 2.1 AA requirements.\n- High-contrast text should meet a minimum of 4.5:1 ratio.\n- Interactive element boundaries need at least a 3:1 contrast ratio.\n- Test in simulated deuteranopia/protanopia color space.',
+    updatedAt: '5h ago',
+  },
+  {
+    id: 'n-3',
+    projectId: 'vault',
+    title: 'CI Key Rotation Race Condition Log',
+    category: 'log',
+    content: 'Spikes in concurrent runner initialization trigger DB locks on secret keys.\nTemporary mitigation: added backoff retry policy (5 attempts, exponentially increasing delay).\nLong-term fix: rewrite key locking with transaction advisory locks.',
+    updatedAt: '1d ago',
+  },
+  {
+    id: 'n-4',
+    projectId: 'pulse',
+    title: 'v2.0.0 Post-Deployment Verification',
+    category: 'general',
+    content: '1. Verify target group health checks are passing.\n2. Confirm anomaly alarms are routed to the on-call pager system.\n3. Check CPU/Memory telemetry trends to ensure no regressions.',
+    updatedAt: '3d ago',
+  },
+  {
+    id: 'n-5',
+    title: 'Holographic Deck Concept Ideas',
+    category: 'idea',
+    content: 'Idea to represent notes as glowing floating shards orbiting above projects.\nSelecting a shard should focus the spatial camera, rendering a neon projection editor overlay.\nAward XP (+10 XP) to encourage code documentation hygiene.',
+    updatedAt: 'Just now',
+  },
 ]

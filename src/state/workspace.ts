@@ -1,8 +1,8 @@
 import { create } from 'zustand'
-import type { ActivityEvent, CalendarEvent, FileCategory, FileItem, Project, Task, User } from '../data/types'
-import { ACTIVITY, EVENTS, FILES, PROJECTS, TASKS, USER } from '../data/mock'
+import type { ActivityEvent, CalendarEvent, FileCategory, FileItem, Project, Task, User, Note, NoteCategory } from '../data/types'
+import { ACTIVITY, EVENTS, FILES, PROJECTS, TASKS, USER, NOTES } from '../data/mock'
 import { taskOrbitPosition } from '../three/layout'
-import { playFocusDoneSound, playFocusStartSound, playLevelUpSound, playTaskCompleteSound } from '../sound/audio'
+import { playFocusDoneSound, playFocusStartSound, playLevelUpSound, playTaskCompleteSound, playNoteSaveSound } from '../sound/audio'
 
 export type Mode = 'immersive' | 'productivity'
 
@@ -17,6 +17,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'projects', label: 'Projects', icon: 'layers' },
   { id: 'tasks', label: 'Tasks', icon: 'check' },
   { id: 'files', label: 'Files', icon: 'folder' },
+  { id: 'notes', label: 'Notes', icon: 'file' },
   { id: 'calendar', label: 'Calendar', icon: 'calendar' },
   { id: 'activity', label: 'Activity', icon: 'activity' },
 ]
@@ -117,6 +118,14 @@ interface WorkspaceState {
   createTask: (input: NewTaskInput) => void
   updateTask: (id: string, patch: Partial<Task>) => void
   clearCompletedFx: (id: string) => void
+  notes: Note[]
+  selectedNoteId: string | null
+  noteFormOpen: boolean
+  selectNote: (id: string | null) => void
+  setNoteFormOpen: (open: boolean) => void
+  createNote: (input: { title: string; content: string; projectId?: string; category: NoteCategory }) => void
+  updateNote: (id: string, patch: Partial<Note>) => void
+  deleteNote: (id: string) => void
 }
 
 export const useWorkspace = create<WorkspaceState>((set) => ({
@@ -140,6 +149,9 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   activityLevel: 0,
   corePulse: 0,
   completedFx: {},
+  notes: NOTES,
+  selectedNoteId: null,
+  noteFormOpen: false,
   settings: {
     quality: 'auto',
     disable3D: false,
@@ -306,12 +318,103 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   updateTask: (id, patch) =>
     set((st) => ({ tasks: st.tasks.map((t) => (t.id === id ? { ...t, ...patch } : t)) })),
 
-  clearCompletedFx: (id) =>
+  clearCompletedFx: (id: string) =>
     set((st) => {
       const next = { ...st.completedFx }
       delete next[id]
       return { completedFx: next }
     }),
+
+  selectNote: (selectedNoteId) => set({ selectedNoteId }),
+  
+  setNoteFormOpen: (noteFormOpen) => set({ noteFormOpen }),
+
+  createNote: (input) => {
+    const s = useWorkspace.getState()
+    const note: Note = {
+      id: `n-${Date.now()}`,
+      title: input.title,
+      content: input.content,
+      category: input.category,
+      projectId: input.projectId,
+      updatedAt: 'Just now',
+    }
+    
+    let { level, xp, xpToNext } = s.user
+    xp += 10
+    const events: ActivityEvent[] = []
+    const isLevelUp = xp >= xpToNext
+    if (isLevelUp) {
+      xp -= xpToNext
+      level += 1
+      xpToNext = Math.round(xpToNext * 1.15)
+      events.push(ev('level-up', 'zap', 'LEVEL UP', `Reached level ${level}`, 'success'))
+    }
+    events.push(ev('note-created', 'plus', 'NOTE CREATED', `${note.title} · +10 XP`, 'success', note.projectId))
+
+    if (s.settings.soundEnabled) {
+      if (isLevelUp) playLevelUpSound()
+      else playNoteSaveSound()
+    }
+
+    set((st) => ({
+      notes: [...st.notes, note],
+      selectedNoteId: note.id,
+      user: { ...st.user, level, xp, xpToNext },
+      activity: [...events, ...st.activity],
+      activityLevel: Math.min(1, st.activityLevel + 0.25),
+      corePulse: st.corePulse + 1,
+      levelUp: isLevelUp ? level : st.levelUp,
+    }))
+  },
+
+  updateNote: (id, patch) => {
+    const s = useWorkspace.getState()
+    const note = s.notes.find((n) => n.id === id)
+    if (!note) return
+    
+    let { level, xp, xpToNext } = s.user
+    xp += 10
+    const events: ActivityEvent[] = []
+    const isLevelUp = xp >= xpToNext
+    if (isLevelUp) {
+      xp -= xpToNext
+      level += 1
+      xpToNext = Math.round(xpToNext * 1.15)
+      events.push(ev('level-up', 'zap', 'LEVEL UP', `Reached level ${level}`, 'success'))
+    }
+    events.push(ev('note-updated', 'file', 'NOTE UPDATED', `${patch.title || note.title} · +10 XP`, 'info', patch.projectId ?? note.projectId))
+
+    if (s.settings.soundEnabled) {
+      if (isLevelUp) playLevelUpSound()
+      else playNoteSaveSound()
+    }
+
+    set((st) => ({
+      notes: st.notes.map((n) =>
+        n.id === id ? { ...n, ...patch, updatedAt: 'Just now' } : n
+      ),
+      user: { ...st.user, level, xp, xpToNext },
+      activity: [...events, ...st.activity],
+      activityLevel: Math.min(1, st.activityLevel + 0.15),
+      corePulse: st.corePulse + 1,
+      levelUp: isLevelUp ? level : st.levelUp,
+    }))
+  },
+
+  deleteNote: (id) => {
+    const s = useWorkspace.getState()
+    const note = s.notes.find((n) => n.id === id)
+    if (!note) return
+
+    set((st) => ({
+      notes: st.notes.filter((n) => n.id !== id),
+      selectedNoteId: st.selectedNoteId === id ? null : st.selectedNoteId,
+      activity: [ev('note-deleted', 'close', 'NOTE DELETED', note.title, 'warning', note.projectId), ...st.activity],
+      activityLevel: Math.min(1, st.activityLevel + 0.1),
+      corePulse: st.corePulse + 1,
+    }))
+  },
 }))
 
 // ponytail: module timers for activity decay (100ms) and focus sprint ticking (1s)

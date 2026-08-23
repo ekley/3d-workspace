@@ -77,3 +77,14 @@ export interface CalendarEvent {
   location: string
   important: boolean
 }
+
+export type NoteCategory = 'spec' | 'idea' | 'log' | 'general'
+
+export interface Note {
+  id: string
+  title: string
+  content: string
+  category: NoteCategory
+  updatedAt: string
+  projectId?: string
+}
