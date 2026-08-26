@@ -10,6 +10,7 @@ import { TaskNodes } from './TaskNodes'
 import { FileClusters } from './FileClusters'
 import { CalendarTimeline } from './CalendarTimeline'
 import { NoteNodes } from './NoteNodes'
+import { DependencyWeb } from './DependencyWeb'
 
 function useTier() {
   const quality = useWorkspace((s) => s.settings.quality)
@@ -158,6 +159,7 @@ export function WorkspaceScene() {
         <FileClusters />
         <CalendarTimeline />
         <NoteNodes />
+        <DependencyWeb />
       </Parallax>
 
       {!reduced && (
