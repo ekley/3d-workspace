@@ -1,10 +1,10 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { QuadraticBezierLine } from '@react-three/drei'
-import { Vector3, MathUtils } from 'three'
+import { Vector3 } from 'three'
 import { useWorkspace } from '../state/workspace'
-import { projectPosition, notePosition, taskOrbitPosition } from './layout'
-import type { CalendarEvent, FileCategory } from '../data/types'
+import { projectPosition, notePosition } from './layout'
+import type { FileCategory } from '../data/types'
 
 const FILE_CATEGORIES: { id: FileCategory; angle: number }[] = [
   { id: 'documents', angle: Math.PI * 0.25 },
@@ -63,13 +63,12 @@ export function DependencyWeb() {
   const activeId = focusedProjectId || selectedProjectId
 
   const projects = useWorkspace((s) => s.projects)
-  const tasks = useWorkspace((s) => s.tasks)
   const files = useWorkspace((s) => s.files)
   const events = useWorkspace((s) => s.events)
   const notes = useWorkspace((s) => s.notes)
-  const reduceMotion = useWorkspace((s) => s.settings.reduceMotion)
+  const reducedMotion = useWorkspace((s) => s.settings.reducedMotion)
 
-  if (!activeId) return null
+  if (!activeId || reducedMotion) return null
 
   const projectIndex = projects.findIndex((p) => p.id === activeId)
   if (projectIndex === -1) return null

@@ -50,8 +50,7 @@ export function DataStreamTicker() {
               color="#22d3ee"
               anchorX="center"
               anchorY="middle"
-              opacity={0.65}
-              transparent
+              fillOpacity={0.65}
               // Using a generic monospace fallback look
               fontStyle="normal"
             >
