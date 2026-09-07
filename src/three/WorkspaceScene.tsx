@@ -11,6 +11,7 @@ import { FileClusters } from './FileClusters'
 import { CalendarTimeline } from './CalendarTimeline'
 import { NoteNodes } from './NoteNodes'
 import { DependencyWeb } from './DependencyWeb'
+import { DataStreamTicker } from './DataStreamTicker'
 
 function useTier() {
   const quality = useWorkspace((s) => s.settings.quality)
@@ -160,6 +161,7 @@ export function WorkspaceScene() {
         <CalendarTimeline />
         <NoteNodes />
         <DependencyWeb />
+        <DataStreamTicker />
       </Parallax>
 
       {!reduced && (
