@@ -12,6 +12,7 @@ import { CalendarTimeline } from './CalendarTimeline'
 import { NoteNodes } from './NoteNodes'
 import { DependencyWeb } from './DependencyWeb'
 import { DataStreamTicker } from './DataStreamTicker'
+import { CompanionDrone } from './CompanionDrone'
 
 function useTier() {
   const quality = useWorkspace((s) => s.settings.quality)
@@ -162,6 +163,7 @@ export function WorkspaceScene() {
         <NoteNodes />
         <DependencyWeb />
         <DataStreamTicker />
+        <CompanionDrone />
       </Parallax>
 
       {!reduced && (
