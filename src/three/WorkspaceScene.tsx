@@ -79,7 +79,16 @@ function CoreHub() {
   const coreColor = focusActive ? '#f59e0b' : '#22d3ee'
 
   return (
-    <group ref={group} position={[0, 0.6, 0]}>
+    <group 
+      ref={group} 
+      position={[0, 0.6, 0]}
+      onClick={(e) => {
+        e.stopPropagation()
+        useWorkspace.getState().bumpActivity(1.0)
+      }}
+      onPointerOver={() => { document.body.style.cursor = 'pointer' }}
+      onPointerOut={() => { document.body.style.cursor = 'auto' }}
+    >
       <mesh ref={core}>
         <octahedronGeometry args={[1.1, 0]} />
         <meshStandardMaterial ref={glow} color={coreColor} emissive={coreColor} emissiveIntensity={1.3} roughness={0.2} metalness={0.5} />
