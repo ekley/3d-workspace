@@ -30,6 +30,21 @@ export default function App() {
   const immersive = mode === 'immersive' && !disable3D
 
   useEffect(() => {
+    const unsub = useWorkspace.subscribe((s) => {
+      let title = 'NEXUS Workspace'
+      if (s.focusTimer.active && s.focusTimer.running) {
+        const min = Math.floor(s.focusTimer.remainingSec / 60)
+        const sec = (s.focusTimer.remainingSec % 60).toString().padStart(2, '0')
+        title = `[${min}:${sec}] ${s.focusTimer.mode === 'work' ? 'Focus' : 'Break'} - NEXUS`
+      } else if (s.selectedProjectId) {
+        const p = s.projects.find((p) => p.id === s.selectedProjectId)
+        if (p) title = `${p.name} - NEXUS`
+      }
+      if (document.title !== title) {
+        document.title = title
+      }
+    })
+
     const onKey = (e: KeyboardEvent) => {
       const s = useWorkspace.getState()
       if ((e.ctrlKey || e.metaKey) && e.key === '`') {
@@ -59,7 +74,10 @@ export default function App() {
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      unsub()
+    }
   }, [])
 
   return (
