@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useWorkspace } from '../state/workspace'
 
 export function StatusBar() {
@@ -6,15 +7,25 @@ export function StatusBar() {
   const quality = useWorkspace((s) => s.settings.quality)
   const focusTimer = useWorkspace((s) => s.focusTimer)
 
+  const [time, setTime] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
   const formatTimer = (sec: number) => {
     const m = Math.floor(sec / 60)
     const s = sec % 60
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
   }
 
+  const timeStr = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+
   return (
     <footer className="status">
       <span className="ok">● SYS ONLINE</span>
+      <span>{timeStr}</span>
       <span>NEXUS CORE v0.1</span>
       {focusTimer.active && (
         <span className="accent">
