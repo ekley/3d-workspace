@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useWorkspace } from '../state/workspace'
 
+const startTime = Date.now()
+
 export function StatusBar() {
   const mode = useWorkspace((s) => s.mode)
   const streak = useWorkspace((s) => s.user.streak)
@@ -8,9 +10,13 @@ export function StatusBar() {
   const focusTimer = useWorkspace((s) => s.focusTimer)
 
   const [time, setTime] = useState(new Date())
+  const [uptime, setUptime] = useState(0)
 
   useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000)
+    const timer = setInterval(() => {
+      setTime(new Date())
+      setUptime(Math.floor((Date.now() - startTime) / 1000))
+    }, 1000)
     return () => clearInterval(timer)
   }, [])
 
@@ -20,12 +26,23 @@ export function StatusBar() {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
   }
 
+  const formatUptime = (sec: number) => {
+    const h = Math.floor(sec / 3600)
+    const m = Math.floor((sec % 3600) / 60)
+    const s = sec % 60
+    if (h > 0) {
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+    }
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+  }
+
   const timeStr = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
 
   return (
     <footer className="status">
       <span className="ok">● SYS ONLINE</span>
       <span>{timeStr}</span>
+      <span>UPTIME {formatUptime(uptime)}</span>
       <span>NEXUS CORE v0.1</span>
       {focusTimer.active && (
         <span className="accent">
