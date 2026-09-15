@@ -11,6 +11,7 @@ export function StatusBar() {
 
   const [time, setTime] = useState(new Date())
   const [uptime, setUptime] = useState(0)
+  const [ping, setPing] = useState(14)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -18,6 +19,13 @@ export function StatusBar() {
       setUptime(Math.floor((Date.now() - startTime) / 1000))
     }, 1000)
     return () => clearInterval(timer)
+  }, [])
+
+  useEffect(() => {
+    const pingTimer = setInterval(() => {
+      setPing(Math.floor(Math.random() * 34) + 12)
+    }, 2000)
+    return () => clearInterval(pingTimer)
   }, [])
 
   const formatTimer = (sec: number) => {
@@ -41,6 +49,7 @@ export function StatusBar() {
   return (
     <footer className="status">
       <span className="ok">● SYS ONLINE</span>
+      <span>PING {ping}MS</span>
       <span>{timeStr}</span>
       <span>UPTIME {formatUptime(uptime)}</span>
       <span>NEXUS CORE v0.1</span>
