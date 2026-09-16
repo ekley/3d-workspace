@@ -145,7 +145,7 @@ export function CyberTerminal() {
     }
   }
 
-  const executeCommand = (cmdStr: string) => {
+  const executeCommand = async (cmdStr: string) => {
     const raw = cmdStr.trim()
     if (!raw) return
 
@@ -166,6 +166,7 @@ export function CyberTerminal() {
         print('------------------------------------------------', 'system')
         print('help                    - Display command list', 'output')
         print('clear                   - Clear screen buffers', 'output')
+        print('server-info             - Fetch real-time backend API telemetry', 'output')
         print('sys-info                - Check system performance & stats', 'output')
         print('projects                - Database of all projects', 'output')
         print('tasks [proj_code]       - List tasks (e.g. tasks ATL)', 'output')
@@ -209,6 +210,25 @@ export function CyberTerminal() {
           print(`MATRIX CODE STREAM: ${next ? 'ACTIVATED' : 'DEACTIVATED'}`, next ? 'success' : 'system')
           return next
         })
+        break
+
+      case 'server-info':
+        print('FETCHING REAL-TIME SERVER TELEMETRY...', 'system')
+        try {
+          const res = await fetch('/api/system')
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          print('------------------------------------------------', 'system')
+          print(`OS PLATFORM: ${data.platform.toUpperCase()}`, 'output')
+          print(`CPU ARCH: ${data.arch.toUpperCase()}`, 'output')
+          print(`TOTAL MEM: ${(data.totalmem / 1024 / 1024 / 1024).toFixed(2)} GB`, 'output')
+          print(`FREE MEM: ${(data.freemem / 1024 / 1024 / 1024).toFixed(2)} GB`, 'output')
+          print(`SERVER UPTIME: ${Math.floor(data.uptime)} SECONDS`, 'output')
+          print(`SYS TIME: ${new Date(data.time).toLocaleTimeString()}`, 'output')
+        } catch (err) {
+          print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
+          success = false
+        }
         break
 
       case 'sys-info':
@@ -470,7 +490,7 @@ export function CyberTerminal() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    executeCommand(inputVal)
+    void executeCommand(inputVal)
   }
 
   return (
