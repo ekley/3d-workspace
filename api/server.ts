@@ -21,6 +21,10 @@ fastify.get('/api/system', async (request, reply) => {
   }
 })
 
+fastify.get('/api/health', async (request, reply) => {
+  return { status: 'ok', timestamp: Date.now() }
+})
+
 const start = async () => {
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' })

@@ -166,6 +166,7 @@ export function CyberTerminal() {
         print('------------------------------------------------', 'system')
         print('help                    - Display command list', 'output')
         print('clear                   - Clear screen buffers', 'output')
+        print('health                  - Check backend API health', 'output')
         print('server-info             - Fetch real-time backend API telemetry', 'output')
         print('sys-info                - Check system performance & stats', 'output')
         print('projects                - Database of all projects', 'output')
@@ -227,6 +228,21 @@ export function CyberTerminal() {
           print(`SYS TIME: ${new Date(data.time).toLocaleTimeString()}`, 'output')
         } catch (err) {
           print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
+          success = false
+        }
+        break
+
+      case 'health':
+        print('PINGING BACKEND API...', 'system')
+        try {
+          const res = await fetch('/api/health')
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          print('------------------------------------------------', 'system')
+          print(`STATUS: ${data.status.toUpperCase()}`, 'output')
+          print(`TIMESTAMP: ${data.timestamp}`, 'output')
+        } catch (err) {
+          print('ERROR: BACKEND API IS UNREACHABLE', 'error')
           success = false
         }
         break
