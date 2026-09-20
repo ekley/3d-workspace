@@ -25,6 +25,15 @@ fastify.get('/api/health', async (request, reply) => {
   return { status: 'ok', timestamp: Date.now() }
 })
 
+fastify.get('/api/stats', async (request, reply) => {
+  return {
+    cpus: os.cpus(),
+    loadavg: os.loadavg(),
+    network: os.networkInterfaces(),
+    timestamp: Date.now()
+  }
+})
+
 const start = async () => {
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' })
