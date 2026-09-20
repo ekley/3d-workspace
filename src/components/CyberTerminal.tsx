@@ -168,6 +168,7 @@ export function CyberTerminal() {
         print('clear                   - Clear screen buffers', 'output')
         print('health                  - Check backend API health', 'output')
         print('server-info             - Fetch real-time backend API telemetry', 'output')
+        print('server-stats            - Check backend system statistics', 'output')
         print('sys-info                - Check system performance & stats', 'output')
         print('projects                - Database of all projects', 'output')
         print('tasks [proj_code]       - List tasks (e.g. tasks ATL)', 'output')
@@ -226,6 +227,26 @@ export function CyberTerminal() {
           print(`FREE MEM: ${(data.freemem / 1024 / 1024 / 1024).toFixed(2)} GB`, 'output')
           print(`SERVER UPTIME: ${Math.floor(data.uptime)} SECONDS`, 'output')
           print(`SYS TIME: ${new Date(data.time).toLocaleTimeString()}`, 'output')
+        } catch (err) {
+          print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
+          success = false
+        }
+        break
+
+      case 'server-stats':
+        print('FETCHING SERVER STATISTICS...', 'system')
+        try {
+          const res = await fetch('/api/stats')
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          print('------------------------------------------------', 'system')
+          print(`CPU CORES: ${data.cpus.length}x ${data.cpus[0]?.model.substring(0, 15) ?? 'UNKNOWN'}...`, 'output')
+          print(`LOAD AVERAGE (1/5/15m): ${data.loadavg.map((l: number) => l.toFixed(2)).join(' / ')}`, 'output')
+          print('NETWORK INTERFACES:', 'output')
+          Object.keys(data.network).forEach((iface) => {
+            const addrs = data.network[iface].map((a: any) => a.address).slice(0, 2).join(', ')
+            print(`  [${iface}] ${addrs}`, 'output')
+          })
         } catch (err) {
           print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
           success = false
