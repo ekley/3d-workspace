@@ -34,6 +34,19 @@ fastify.get('/api/stats', async (request, reply) => {
   }
 })
 
+const motdMessages = [
+  "SYSTEM NOMINAL. HAVE A PRODUCTIVE DAY.",
+  "DO NOT TRUST THE GLITCHES.",
+  "THE MATRIX IS LISTENING.",
+  "FOCUS PROTOCOL: ONLINE.",
+  "NEXUS CORE OPERATING AT PEAK EFFICIENCY."
+];
+
+fastify.get('/api/motd', async (request, reply) => {
+  const msg = motdMessages[Math.floor(Math.random() * motdMessages.length)];
+  return { message: msg, timestamp: Date.now() }
+})
+
 const start = async () => {
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' })

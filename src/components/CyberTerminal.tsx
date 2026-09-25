@@ -169,6 +169,7 @@ export function CyberTerminal() {
         print('health                  - Check backend API health', 'output')
         print('server-info             - Fetch real-time backend API telemetry', 'output')
         print('server-stats            - Check backend system statistics', 'output')
+        print('motd                    - Fetch Message of the Day from Server', 'output')
         print('sys-info                - Check system performance & stats', 'output')
         print('projects                - Database of all projects', 'output')
         print('tasks [proj_code]       - List tasks (e.g. tasks ATL)', 'output')
@@ -247,6 +248,20 @@ export function CyberTerminal() {
             const addrs = data.network[iface].map((a: any) => a.address).slice(0, 2).join(', ')
             print(`  [${iface}] ${addrs}`, 'output')
           })
+        } catch (err) {
+          print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
+          success = false
+        }
+        break
+
+      case 'motd':
+        print('FETCHING MESSAGE OF THE DAY...', 'system')
+        try {
+          const res = await fetch('/api/motd')
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          print('------------------------------------------------', 'system')
+          print(`>> ${data.message}`, 'output')
         } catch (err) {
           print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
           success = false
