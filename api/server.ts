@@ -47,6 +47,16 @@ fastify.get('/api/motd', async (request, reply) => {
   return { message: msg, timestamp: Date.now() }
 })
 
+fastify.get('/api/sys-logs', async (request, reply) => {
+  const sysLogs = [
+    "[SYS] Initializing core modules...",
+    "[NET] Establishing secure uplink...",
+    "[SEC] Firewall protocols engaged.",
+    "[OPS] Awaiting commands."
+  ];
+  return { logs: sysLogs, timestamp: Date.now() }
+})
+
 const start = async () => {
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' })
