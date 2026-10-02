@@ -171,6 +171,7 @@ export function CyberTerminal() {
         print('server-stats            - Check backend system statistics', 'output')
         print('motd                    - Fetch Message of the Day from Server', 'output')
         print('sys-info                - Check system performance & stats', 'output')
+        print('sys-logs                - Fetch recent backend system logs', 'output')
         print('projects                - Database of all projects', 'output')
         print('tasks [proj_code]       - List tasks (e.g. tasks ATL)', 'output')
         print('complete <task_id>      - Set task completed (e.g. complete atl-1)', 'output')
@@ -294,6 +295,22 @@ export function CyberTerminal() {
         print(`AUDIO ENGINE STATE: ${soundEnabled ? 'ON' : 'OFF'}`, 'output')
         print(`HARDWARE CONCURRENCY: ${window.navigator.hardwareConcurrency || 'UNKNOWN'} CORES`, 'output')
         print(`QUALITY TIER: ${quality.toUpperCase()}`, 'output')
+        break
+
+      case 'sys-logs':
+        print('FETCHING SYSTEM LOGS...', 'system')
+        try {
+          const res = await fetch('/api/sys-logs')
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          print('------------------------------------------------', 'system')
+          data.logs.forEach((log: string) => {
+            print(log, 'output')
+          })
+        } catch (err) {
+          print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
+          success = false
+        }
         break
 
       case 'projects':
