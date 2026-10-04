@@ -61,6 +61,10 @@ fastify.get('/api/version', async (request, reply) => {
   return { version: '1.0.0', build: 'NEXUS-CORE-V1', timestamp: Date.now() }
 })
 
+fastify.get('/api/time', async (request, reply) => {
+  return { iso: new Date().toISOString(), timestamp: Date.now() }
+})
+
 const start = async () => {
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' })
