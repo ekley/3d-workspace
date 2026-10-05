@@ -65,6 +65,14 @@ fastify.get('/api/time', async (request, reply) => {
   return { iso: new Date().toISOString(), timestamp: Date.now() }
 })
 
+fastify.get('/api/whoami', async (request, reply) => {
+  return {
+    userInfo: os.userInfo(),
+    hostname: os.hostname(),
+    timestamp: Date.now()
+  }
+})
+
 const start = async () => {
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' })
