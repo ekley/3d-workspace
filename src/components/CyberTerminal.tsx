@@ -172,6 +172,9 @@ export function CyberTerminal() {
         print('motd                    - Fetch Message of the Day from Server', 'output')
         print('sys-info                - Check system performance & stats', 'output')
         print('sys-logs                - Fetch recent backend system logs', 'output')
+        print('version                 - Show backend build version', 'output')
+        print('time                    - Server time & clock drift', 'output')
+        print('whoami                  - Identify backend host operator', 'output')
         print('projects                - Database of all projects', 'output')
         print('tasks [proj_code]       - List tasks (e.g. tasks ATL)', 'output')
         print('complete <task_id>      - Set task completed (e.g. complete atl-1)', 'output')
@@ -307,6 +310,62 @@ export function CyberTerminal() {
           data.logs.forEach((log: string) => {
             print(log, 'output')
           })
+        } catch (err) {
+          print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
+          success = false
+        }
+        break
+
+      case 'version':
+        print('QUERYING CORE BUILD SIGNATURE...', 'system')
+        try {
+          const res = await fetch('/api/version')
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          print('------------------------------------------------', 'system')
+          print(`VERSION: v${data.version}`, 'output')
+          print(`BUILD: ${data.build}`, 'output')
+          print(`QUERIED AT: ${new Date(data.timestamp).toLocaleString()}`, 'output')
+        } catch (err) {
+          print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
+          success = false
+        }
+        break
+
+      case 'time':
+        print('SYNCHRONISING CHRONOMETERS...', 'system')
+        try {
+          const t0 = Date.now()
+          const res = await fetch('/api/time')
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          const t1 = Date.now()
+          const rtt = t1 - t0
+          const drift = data.timestamp - (t0 + rtt / 2)
+          print('------------------------------------------------', 'system')
+          print(`SERVER (UTC): ${data.iso}`, 'output')
+          print(`CLIENT (LOCAL): ${new Date(t1).toLocaleString()}`, 'output')
+          print(`ROUND TRIP: ${rtt} ms`, 'output')
+          print(`CLOCK DRIFT: ${drift >= 0 ? '+' : ''}${Math.round(drift)} ms`, Math.abs(drift) > 1000 ? 'error' : 'success')
+        } catch (err) {
+          print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
+          success = false
+        }
+        break
+
+      case 'whoami':
+        print('RESOLVING OPERATOR IDENTITY...', 'system')
+        try {
+          const res = await fetch('/api/whoami')
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          const info = data.userInfo ?? {}
+          print('------------------------------------------------', 'system')
+          print(`OPERATOR: ${info.username ?? 'UNKNOWN'}`, 'output')
+          print(`HOST: ${data.hostname}`, 'output')
+          print(`HOME: ${info.homedir ?? 'N/A'}`, 'output')
+          print(`SHELL: ${info.shell ?? 'N/A'}`, 'output')
+          print(`WORKSPACE ID: ${user.name} (@${user.handle})`, 'output')
         } catch (err) {
           print('ERROR: UNABLE TO CONTACT BACKEND API', 'error')
           success = false
