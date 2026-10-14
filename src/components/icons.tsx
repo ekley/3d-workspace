@@ -32,6 +32,7 @@ const PATHS: Record<string, string> = {
   'volume-x': 'M11 5L6 9H2v6h4l5 4V5zm12 4l-6 6m0-6l6 6',
   rotate: 'M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15',
   terminal: 'M4 17l6-6-6-6M12 19h10',
+  trash: 'M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2',
 }
 
 export function Icon({ name, size = 18 }: IconProps) {

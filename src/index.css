@@ -1074,6 +1074,28 @@ button {
   cursor: default;
 }
 
+.tp-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--danger);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  background: rgba(248, 113, 113, 0.06);
+  margin-top: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tp-delete-btn:hover {
+  background: rgba(248, 113, 113, 0.16);
+  border-color: var(--danger);
+}
+
 @media (max-width: 720px) {
   .tp-body {
     grid-template-columns: 1fr;

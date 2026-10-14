@@ -8,6 +8,7 @@ export function StatusBar() {
   const streak = useWorkspace((s) => s.user.streak)
   const quality = useWorkspace((s) => s.settings.quality)
   const focusTimer = useWorkspace((s) => s.focusTimer)
+  const apiSyncStatus = useWorkspace((s) => s.apiSyncStatus)
 
   const [time, setTime] = useState(new Date())
   const [uptime, setUptime] = useState(0)
@@ -49,6 +50,13 @@ export function StatusBar() {
   return (
     <footer className="status">
       <span className="ok">● SYS ONLINE</span>
+      {apiSyncStatus === 'synced' ? (
+        <span className="ok" title="Backend database synced & persistent">● API SYNCED</span>
+      ) : apiSyncStatus === 'syncing' ? (
+        <span className="accent" title="Synchronizing with backend store...">◌ API SYNCING</span>
+      ) : (
+        <span style={{ color: 'var(--text-3)' }} title="Operating in local memory mode">○ API LOCAL</span>
+      )}
       <span>PING {ping}MS</span>
       <span>{timeStr}</span>
       <span>UPTIME {formatUptime(uptime)}</span>

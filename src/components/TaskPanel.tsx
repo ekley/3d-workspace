@@ -29,6 +29,7 @@ export function TaskPanel() {
   const completeTask = useWorkspace((s) => s.completeTask)
   const updateTask = useWorkspace((s) => s.updateTask)
   const createTask = useWorkspace((s) => s.createTask)
+  const deleteTask = useWorkspace((s) => s.deleteTask)
   const showForm = useWorkspace((s) => s.taskFormOpen)
   const setShowForm = useWorkspace((s) => s.setTaskFormOpen)
 
@@ -201,6 +202,13 @@ export function TaskPanel() {
                   disabled={selected.status === 'completed'}
                 >
                   <Icon name="check" size={15} /> Complete task
+                </button>
+                <button
+                  className="tp-delete-btn"
+                  onClick={() => deleteTask(selected.id)}
+                  title="Delete task from persistent database"
+                >
+                  <Icon name="trash" size={14} /> Delete task
                 </button>
               </div>
             </aside>

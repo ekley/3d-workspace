@@ -22,6 +22,10 @@ export function CyberTerminal() {
   const focusTimer = useWorkspace((s) => s.focusTimer)
   const startFocusTimer = useWorkspace((s) => s.startFocusTimer)
   const completeTask = useWorkspace((s) => s.completeTask)
+  const createTask = useWorkspace((s) => s.createTask)
+  const deleteTask = useWorkspace((s) => s.deleteTask)
+  const syncTasks = useWorkspace((s) => s.syncTasks)
+  const apiSyncStatus = useWorkspace((s) => s.apiSyncStatus)
   const notes = useWorkspace((s) => s.notes)
   const createNote = useWorkspace((s) => s.createNote)
   const deleteNote = useWorkspace((s) => s.deleteNote)
@@ -178,6 +182,10 @@ export function CyberTerminal() {
         print('projects                - Database of all projects', 'output')
         print('tasks [proj_code]       - List tasks (e.g. tasks ATL)', 'output')
         print('complete <task_id>      - Set task completed (e.g. complete atl-1)', 'output')
+        print('task-create <proj> <txt>- Create task via Backend API (e.g. task-create atl Fix auth)', 'output')
+        print('task-delete <task_id>   - Delete task from Backend DB (e.g. task-delete atl-1)', 'output')
+        print('task-sync               - Synchronize tasks with Backend Store', 'output')
+        print('task-reset              - Reset task database to default seed', 'output')
         print('notes [proj_code]       - List all notes shards', 'output')
         print('note-view <note_id>     - Display note content details', 'output')
         print('note-create <title>     - Create general note shard', 'output')
@@ -382,7 +390,7 @@ export function CyberTerminal() {
 
       case 'tasks': {
         const codeFilter = args[1]?.toLowerCase()
-        print('TASKS REGISTRY //', 'system')
+        print(`TASKS REGISTRY // [BACKEND: ${apiSyncStatus.toUpperCase()}]`, 'system')
         print('------------------------------------------------', 'system')
         
         let targetProjId: string | undefined = undefined
@@ -428,7 +436,83 @@ export function CyberTerminal() {
         }
         
         completeTask(task.id)
-        print(`SUCCESS: Completed task [${task.id}] : "${task.title}"! XP awarded.`, 'success')
+        print(`SUCCESS: Completed task [${task.id}] : "${task.title}"! Persisted to backend.`, 'success')
+        break
+      }
+
+      case 'task-create': {
+        const projCode = args[1]?.toLowerCase()
+        const title = args.slice(2).join(' ')
+        if (!projCode || !title) {
+          print('Usage: task-create <proj_code> <title> (e.g. task-create ATL Refactor parser)', 'error')
+          success = false
+          break
+        }
+        const proj = projects.find((p) => p.code.toLowerCase() === projCode)
+        if (!proj) {
+          print(`Error: Project code "${args[1]}" not found.`, 'error')
+          success = false
+          break
+        }
+        createTask({
+          projectId: proj.id,
+          title,
+          priority: 'medium',
+        })
+        print(`SUCCESS: Created task "${title}" on [${proj.code}]. Dispatched to Backend Store.`, 'success')
+        break
+      }
+
+      case 'task-delete': {
+        const taskId = args[1]
+        if (!taskId) {
+          print('Usage: task-delete <task_id> (e.g. task-delete atl-1)', 'error')
+          success = false
+          break
+        }
+        const task = tasks.find((t) => t.id.toLowerCase() === taskId.toLowerCase())
+        if (!task) {
+          print(`Error: Task "${taskId}" not found.`, 'error')
+          success = false
+          break
+        }
+        await deleteTask(task.id)
+        print(`SUCCESS: Deleted task [${task.id}] : "${task.title}" from Backend Store.`, 'success')
+        break
+      }
+
+      case 'task-sync': {
+        print('SYNCHRONIZING WITH BACKEND PERSISTENCE STORE...', 'system')
+        try {
+          const t0 = Date.now()
+          await syncTasks()
+          const t1 = Date.now()
+          const rtt = t1 - t0
+          const currentTasks = useWorkspace.getState().tasks
+          const done = currentTasks.filter((t) => t.status === 'completed').length
+          print('------------------------------------------------', 'system')
+          print(`BACKEND SYNC: OK (${rtt} ms round-trip)`, 'success')
+          print(`TASKS INDEXED: ${currentTasks.length} (${done} completed, ${currentTasks.length - done} pending)`, 'output')
+        } catch {
+          print('ERROR: UNABLE TO SYNCHRONIZE WITH BACKEND API', 'error')
+          success = false
+        }
+        break
+      }
+
+      case 'task-reset': {
+        print('DISPATCHING RESET TO BACKEND TASK DATABASE...', 'system')
+        try {
+          const res = await fetch('/api/tasks/reset', { method: 'POST' })
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          await syncTasks()
+          print('------------------------------------------------', 'system')
+          print(`SUCCESS: ${data.message} (${data.count} tasks restored).`, 'success')
+        } catch {
+          print('ERROR: UNABLE TO RESET TASK STORE ON BACKEND', 'error')
+          success = false
+        }
         break
       }
 

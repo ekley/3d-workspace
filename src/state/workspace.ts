@@ -61,6 +61,8 @@ export interface FocusTimer {
   projectId?: string
 }
 
+export type ApiSyncStatus = 'synced' | 'syncing' | 'offline' | 'error'
+
 interface WorkspaceState {
   mode: Mode
   activeNav: string
@@ -91,6 +93,7 @@ interface WorkspaceState {
   focusMode: boolean
   focusModalOpen: boolean
   focusTimer: FocusTimer
+  apiSyncStatus: ApiSyncStatus
   setMode: (mode: Mode) => void
   setSettingsOpen: (open: boolean) => void
   updateSettings: (patch: Partial<Settings>) => void
@@ -117,6 +120,8 @@ interface WorkspaceState {
   completeTask: (id: string) => void
   createTask: (input: NewTaskInput) => void
   updateTask: (id: string, patch: Partial<Task>) => void
+  deleteTask: (id: string) => Promise<void>
+  syncTasks: () => Promise<void>
   clearCompletedFx: (id: string) => void
   notes: Note[]
   selectedNoteId: string | null
@@ -152,6 +157,7 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
   notes: NOTES,
   selectedNoteId: null,
   noteFormOpen: false,
+  apiSyncStatus: 'syncing',
   settings: {
     quality: 'auto',
     disable3D: false,
@@ -283,11 +289,21 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
       levelUp: level !== st.user.level ? level : st.levelUp,
       completedFx: { ...st.completedFx, [id]: { from, at: performance.now() } },
     }))
+
+    // Asynchronously synchronize completion with backend
+    fetch(`/api/tasks/${id}/complete`, { method: 'POST' })
+      .then((res) => {
+        if (res.ok) set({ apiSyncStatus: 'synced' })
+      })
+      .catch(() => {
+        set({ apiSyncStatus: 'offline' })
+      })
   },
 
   createTask: (input) => {
+    const tempId = `t-${Date.now()}`
     const task: Task = {
-      id: `t-${Date.now()}`,
+      id: tempId,
       projectId: input.projectId,
       title: input.title,
       status: 'backlog',
@@ -313,10 +329,115 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
       activityLevel: Math.min(1, st.activityLevel + 0.3),
       corePulse: st.corePulse + 1,
     }))
+
+    // Asynchronously synchronize creation with backend
+    fetch('/api/tasks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        projectId: input.projectId,
+        title: input.title,
+        priority: input.priority ?? 'medium',
+        assignee: input.assignee ?? 'Elena',
+        dueDate: input.dueDate ?? 'TBD',
+        estimate: input.estimate ?? '1d',
+      }),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json()
+          if (data.task?.id) {
+            set((st) => ({
+              tasks: st.tasks.map((t) => (t.id === tempId ? data.task : t)),
+              apiSyncStatus: 'synced',
+            }))
+          }
+        }
+      })
+      .catch(() => {
+        set({ apiSyncStatus: 'offline' })
+      })
   },
 
-  updateTask: (id, patch) =>
-    set((st) => ({ tasks: st.tasks.map((t) => (t.id === id ? { ...t, ...patch } : t)) })),
+  updateTask: (id, patch) => {
+    set((st) => ({ tasks: st.tasks.map((t) => (t.id === id ? { ...t, ...patch } : t)) }))
+    fetch(`/api/tasks/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    })
+      .then((res) => {
+        if (res.ok) set({ apiSyncStatus: 'synced' })
+      })
+      .catch(() => {
+        set({ apiSyncStatus: 'offline' })
+      })
+  },
+
+  deleteTask: async (id) => {
+    const s = useWorkspace.getState()
+    const task = s.tasks.find((t) => t.id === id)
+    if (!task) return
+    set((st) => {
+      const remaining = st.tasks.filter((t) => t.id !== id)
+      return {
+        tasks: remaining,
+        selectedTaskId: st.selectedTaskId === id ? null : st.selectedTaskId,
+        projects: st.projects.map((p) => {
+          if (p.id !== task.projectId) return p
+          const projTasks = remaining.filter((t) => t.projectId === p.id)
+          const done = projTasks.filter((t) => t.status === 'completed').length
+          const count = projTasks.length
+          return {
+            ...p,
+            taskCount: count,
+            doneCount: done,
+            progress: count > 0 ? Math.min(100, Math.round((done / count) * 100)) : 0,
+            status: count > 0 && done >= count ? 'completed' : p.status === 'completed' && done < count ? 'active' : p.status,
+          }
+        }),
+      }
+    })
+
+    try {
+      const res = await fetch(`/api/tasks/${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        set({ apiSyncStatus: 'synced' })
+      }
+    } catch {
+      set({ apiSyncStatus: 'offline' })
+    }
+  },
+
+  syncTasks: async () => {
+    set({ apiSyncStatus: 'syncing' })
+    try {
+      const res = await fetch('/api/tasks')
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      if (Array.isArray(data.tasks)) {
+        const liveTasks: Task[] = data.tasks
+        set((st) => ({
+          tasks: liveTasks,
+          apiSyncStatus: 'synced',
+          projects: st.projects.map((p) => {
+            const projTasks = liveTasks.filter((t) => t.projectId === p.id)
+            const done = projTasks.filter((t) => t.status === 'completed').length
+            const count = projTasks.length
+            return {
+              ...p,
+              taskCount: count,
+              doneCount: done,
+              progress: count > 0 ? Math.min(100, Math.round((done / count) * 100)) : 0,
+              status: count > 0 && done >= count ? 'completed' : p.status === 'completed' && done < count ? 'active' : p.status,
+            }
+          }),
+        }))
+      }
+    } catch {
+      set({ apiSyncStatus: 'offline' })
+    }
+  },
 
   clearCompletedFx: (id: string) =>
     set((st) => {
@@ -485,3 +606,10 @@ setInterval(() => {
     })
   }
 }, 1000)
+
+if (typeof window !== 'undefined') {
+  setTimeout(() => {
+    void useWorkspace.getState().syncTasks()
+  }, 100)
+}
+
