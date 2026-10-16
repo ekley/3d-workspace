@@ -193,6 +193,26 @@ fastify.post('/api/tasks/reset', async (request, reply) => {
   }
 })
 
+// ==========================================
+// Workspace Summary & Metrics Telemetry API
+// ==========================================
+
+fastify.get('/api/workspace/summary', async (request, reply) => {
+  const summary = taskStore.getWorkspaceSummary()
+  return {
+    summary,
+    timestamp: Date.now(),
+  }
+})
+
+fastify.get('/api/summary', async (request, reply) => {
+  const summary = taskStore.getWorkspaceSummary()
+  return {
+    summary,
+    timestamp: Date.now(),
+  }
+})
+
 const start = async () => {
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' })
