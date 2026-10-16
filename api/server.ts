@@ -1,7 +1,7 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import os from 'os'
-import { taskStore, TaskPriority, TaskStatus } from './taskStore'
+import { taskStore, TaskPriority, TaskStatus, WorkspaceSummary } from './taskStore'
 
 const fastify = Fastify({
   logger: true
