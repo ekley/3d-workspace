@@ -17,6 +17,30 @@ export interface Task {
   tags: string[]
 }
 
+export interface WorkspaceSummary {
+  totalTasks: number
+  completedTasks: number
+  pendingTasks: number
+  completionRate: number
+  byStatus: {
+    backlog: number
+    inProgress: number
+    review: number
+    completed: number
+  }
+  byPriority: {
+    low: number
+    medium: number
+    high: number
+  }
+  projects: Array<{
+    id: string
+    taskCount: number
+    doneCount: number
+    progress: number
+  }>
+}
+
 export const DEFAULT_TASKS: Task[] = [
   { id: 'atl-1', projectId: 'atlas', title: 'Design query builder UI', status: 'in-progress', priority: 'high', assignee: 'Kira', dueDate: 'Mar 14', estimate: '3d', tags: ['ui'] },
   { id: 'atl-2', projectId: 'atlas', title: 'Implement anomaly detection pipeline', status: 'completed', priority: 'high', assignee: 'Sam', dueDate: 'Mar 10', estimate: '5d', tags: ['ml'] },
