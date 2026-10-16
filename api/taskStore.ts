@@ -202,6 +202,59 @@ class TaskStore {
     this.save()
     return this.tasks
   }
+
+  public getWorkspaceSummary(): WorkspaceSummary {
+    const totalTasks = this.tasks.length
+    let completedTasks = 0
+    let pendingTasks = 0
+    const byStatus = { backlog: 0, inProgress: 0, review: 0, completed: 0 }
+    const byPriority = { low: 0, medium: 0, high: 0 }
+
+    const projectMap = new Map<string, { taskCount: number; doneCount: number }>()
+
+    for (const t of this.tasks) {
+      if (t.status === 'completed') {
+        completedTasks++
+        byStatus.completed++
+      } else {
+        pendingTasks++
+        if (t.status === 'in-progress') byStatus.inProgress++
+        else if (t.status === 'review') byStatus.review++
+        else if (t.status === 'backlog') byStatus.backlog++
+      }
+
+      if (t.priority === 'high') byPriority.high++
+      else if (t.priority === 'medium') byPriority.medium++
+      else if (t.priority === 'low') byPriority.low++
+
+      const pId = t.projectId.toLowerCase()
+      const pData = projectMap.get(pId) || { taskCount: 0, doneCount: 0 }
+      pData.taskCount++
+      if (t.status === 'completed') {
+        pData.doneCount++
+      }
+      projectMap.set(pId, pData)
+    }
+
+    const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 1000) / 10 : 0
+
+    const projects = Array.from(projectMap.entries()).map(([id, stats]) => ({
+      id,
+      taskCount: stats.taskCount,
+      doneCount: stats.doneCount,
+      progress: stats.taskCount > 0 ? Math.round((stats.doneCount / stats.taskCount) * 100) : 0,
+    }))
+
+    return {
+      totalTasks,
+      completedTasks,
+      pendingTasks,
+      completionRate,
+      byStatus,
+      byPriority,
+      projects,
+    }
+  }
 }
 
 export const taskStore = new TaskStore()
