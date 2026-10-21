@@ -2,6 +2,7 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import os from 'os'
 import { taskStore, TaskPriority, TaskStatus, WorkspaceSummary } from './taskStore'
+import { projectStore, ProjectStatus } from './projectStore'
 
 const fastify = Fastify({
   logger: true
@@ -209,6 +210,38 @@ fastify.get('/api/summary', async (request, reply) => {
   const summary = taskStore.getWorkspaceSummary()
   return {
     summary,
+    timestamp: Date.now(),
+  }
+})
+
+// ==========================================
+// Projects Telemetry & Linked Tasks API
+// ==========================================
+
+fastify.get('/api/projects', async (request, reply) => {
+  const query = request.query as { status?: string }
+  const projects = projectStore.getAllProjects({
+    status: query.status as ProjectStatus | undefined,
+  })
+  return {
+    projects,
+    count: projects.length,
+    timestamp: Date.now(),
+  }
+})
+
+fastify.get('/api/projects/:id', async (request, reply) => {
+  const { id } = request.params as { id: string }
+  const project = projectStore.getProjectById(id)
+  if (!project) {
+    reply.status(404).send({
+      error: `Project with id or code '${id}' not found`,
+      timestamp: Date.now(),
+    })
+    return
+  }
+  return {
+    project,
     timestamp: Date.now(),
   }
 })
