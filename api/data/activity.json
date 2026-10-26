@@ -1,0 +1,210 @@
+[
+  {
+    "id": "ev-1793022483667-306",
+    "type": "system-alert",
+    "icon": "shield",
+    "title": "FIREWALL BREACH ATTEMPT",
+    "detail": "Intrusion countermeasure engaged on sector 7",
+    "time": "Just now",
+    "severity": "critical",
+    "projectId": "vault",
+    "timestamp": 1793022483667
+  },
+  {
+    "id": "ev-1",
+    "type": "task-completed",
+    "icon": "check",
+    "title": "TASK COMPLETED",
+    "detail": "Atlas · Anomaly detection pipeline",
+    "time": "2h ago",
+    "severity": "success",
+    "projectId": "atlas",
+    "timestamp": 1793015283663
+  },
+  {
+    "id": "ev-2",
+    "type": "project-updated",
+    "icon": "layers",
+    "title": "PROJECT UPDATED",
+    "detail": "Helios reached 50% progress",
+    "time": "5h ago",
+    "severity": "info",
+    "projectId": "helios",
+    "timestamp": 1793004483663
+  },
+  {
+    "id": "ev-3",
+    "type": "deployment",
+    "icon": "zap",
+    "title": "DEPLOYMENT SUCCESSFUL",
+    "detail": "Pulse v2.0.0 · production",
+    "time": "1d ago",
+    "severity": "success",
+    "projectId": "pulse",
+    "timestamp": 1792936083663
+  },
+  {
+    "id": "ev-4",
+    "type": "file-uploaded",
+    "icon": "upload",
+    "title": "NEW FILE UPLOADED",
+    "detail": "Vault · key-rotation-notes.md",
+    "time": "3h ago",
+    "severity": "info",
+    "projectId": "vault",
+    "timestamp": 1793011683663
+  },
+  {
+    "id": "ev-5",
+    "type": "comment",
+    "icon": "bell",
+    "title": "COMMENT RECEIVED",
+    "detail": "Kira on Atlas query builder",
+    "time": "4h ago",
+    "severity": "info",
+    "projectId": "atlas",
+    "timestamp": 1793008083663
+  },
+  {
+    "id": "ev-6",
+    "type": "milestone",
+    "icon": "check",
+    "title": "MILESTONE REACHED",
+    "detail": "Pulse · 4/4 tasks shipped",
+    "time": "1d ago",
+    "severity": "success",
+    "projectId": "pulse",
+    "timestamp": 1792928883663
+  },
+  {
+    "id": "ev-7",
+    "type": "review",
+    "icon": "activity",
+    "title": "TASK IN REVIEW",
+    "detail": "Helios · Theming API docs",
+    "time": "6h ago",
+    "severity": "warning",
+    "projectId": "helios",
+    "timestamp": 1793000883663
+  },
+  {
+    "id": "ev-8",
+    "type": "build-failed",
+    "icon": "close",
+    "title": "BUILD FAILED",
+    "detail": "Vault · key rotation test failed CI",
+    "time": "1d ago",
+    "severity": "critical",
+    "projectId": "vault",
+    "timestamp": 1792921683663
+  },
+  {
+    "id": "ev-9",
+    "type": "task-created",
+    "icon": "plus",
+    "title": "TASK CREATED",
+    "detail": "Drift · Offline sync strategy",
+    "time": "2d ago",
+    "severity": "info",
+    "projectId": "drift",
+    "timestamp": 1792849683663
+  },
+  {
+    "id": "ev-10",
+    "type": "streak",
+    "icon": "zap",
+    "title": "STREAK MAINTAINED",
+    "detail": "14 day productivity streak",
+    "time": "3d ago",
+    "severity": "success",
+    "timestamp": 1792763283663
+  },
+  {
+    "id": "ev-11",
+    "type": "file-uploaded",
+    "icon": "upload",
+    "title": "NEW FILE UPLOADED",
+    "detail": "Helios · tokens-v3.json",
+    "time": "1d ago",
+    "severity": "info",
+    "projectId": "helios",
+    "timestamp": 1792914483663
+  },
+  {
+    "id": "ev-12",
+    "type": "deployment",
+    "icon": "zap",
+    "title": "DEPLOYMENT SUCCESSFUL",
+    "detail": "Atlas · staging · build #482",
+    "time": "2d ago",
+    "severity": "success",
+    "projectId": "atlas",
+    "timestamp": 1792846083663
+  },
+  {
+    "id": "ev-13",
+    "type": "comment",
+    "icon": "bell",
+    "title": "COMMENT RECEIVED",
+    "detail": "Sam on Vault HSM integration",
+    "time": "5h ago",
+    "severity": "info",
+    "projectId": "vault",
+    "timestamp": 1793002683663
+  },
+  {
+    "id": "ev-14",
+    "type": "project-updated",
+    "icon": "layers",
+    "title": "PROJECT UPDATED",
+    "detail": "Atlas reached 75% progress",
+    "time": "2h ago",
+    "severity": "info",
+    "projectId": "atlas",
+    "timestamp": 1793014383663
+  },
+  {
+    "id": "ev-15",
+    "type": "task-created",
+    "icon": "plus",
+    "title": "TASK CREATED",
+    "detail": "Helios · Dark-mode contrast audit",
+    "time": "6h ago",
+    "severity": "info",
+    "projectId": "helios",
+    "timestamp": 1792998183663
+  },
+  {
+    "id": "ev-16",
+    "type": "review",
+    "icon": "activity",
+    "title": "TASK IN REVIEW",
+    "detail": "Vault · Zero-trust access review",
+    "time": "7h ago",
+    "severity": "warning",
+    "projectId": "vault",
+    "timestamp": 1792997283663
+  },
+  {
+    "id": "ev-17",
+    "type": "milestone",
+    "icon": "check",
+    "title": "MILESTONE REACHED",
+    "detail": "Helios · v3 token set shipped",
+    "time": "2d ago",
+    "severity": "success",
+    "projectId": "helios",
+    "timestamp": 1792835283663
+  },
+  {
+    "id": "ev-18",
+    "type": "build-failed",
+    "icon": "close",
+    "title": "BUILD FAILED",
+    "detail": "Atlas · telemetry test flake",
+    "time": "3d ago",
+    "severity": "critical",
+    "projectId": "atlas",
+    "timestamp": 1792756083663
+  }
+]

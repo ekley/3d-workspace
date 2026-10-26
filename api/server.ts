@@ -3,6 +3,7 @@ import cors from '@fastify/cors'
 import os from 'os'
 import { taskStore, TaskPriority, TaskStatus, WorkspaceSummary } from './taskStore'
 import { projectStore, ProjectStatus } from './projectStore'
+import { activityStore, ActivitySeverity, ActivityEvent } from './activityStore'
 
 const fastify = Fastify({
   logger: true
@@ -124,6 +125,15 @@ fastify.post('/api/tasks', async (request, reply) => {
     tags: body.tags,
   })
 
+  activityStore.createActivity({
+    type: 'task-created',
+    icon: 'plus',
+    title: 'TASK CREATED',
+    detail: `${created.projectId.toUpperCase()} · ${created.title}`,
+    severity: 'info',
+    projectId: created.projectId,
+  })
+
   reply.status(201).send({
     task: created,
     message: 'Task created successfully',
@@ -160,6 +170,15 @@ fastify.post('/api/tasks/:id/complete', async (request, reply) => {
     return
   }
 
+  activityStore.createActivity({
+    type: 'task-completed',
+    icon: 'check',
+    title: 'TASK COMPLETED',
+    detail: `${result.task.projectId.toUpperCase()} · ${result.task.title} (+${result.xpGain} XP)`,
+    severity: 'success',
+    projectId: result.task.projectId,
+  })
+
   return {
     task: result.task,
     xpGain: result.xpGain,
@@ -175,6 +194,14 @@ fastify.delete('/api/tasks/:id', async (request, reply) => {
     reply.status(404).send({ error: `Task with id '${id}' not found`, timestamp: Date.now() })
     return
   }
+
+  activityStore.createActivity({
+    type: 'task-deleted',
+    icon: 'close',
+    title: 'TASK DELETED',
+    detail: `Task [${id}] removed from database`,
+    severity: 'warning',
+  })
 
   return {
     success: true,
@@ -242,6 +269,94 @@ fastify.get('/api/projects/:id', async (request, reply) => {
   }
   return {
     project,
+    timestamp: Date.now(),
+  }
+})
+
+// ==========================================
+// Activity Feed & Event Stream API
+// ==========================================
+
+fastify.get('/api/activity', async (request, reply) => {
+  const query = request.query as {
+    severity?: string
+    type?: string
+    projectId?: string
+    limit?: string
+  }
+  const limit = query.limit ? parseInt(query.limit, 10) : undefined
+  const events = activityStore.getAllActivities({
+    severity: query.severity as ActivitySeverity | undefined,
+    type: query.type,
+    projectId: query.projectId,
+    limit: isNaN(limit!) ? undefined : limit,
+  })
+  return {
+    events,
+    count: events.length,
+    timestamp: Date.now(),
+  }
+})
+
+fastify.get('/api/activity/recent', async (request, reply) => {
+  const query = request.query as { limit?: string }
+  const limit = query.limit ? parseInt(query.limit, 10) : 10
+  const events = activityStore.getRecentActivities(isNaN(limit) ? 10 : limit)
+  return {
+    events,
+    count: events.length,
+    timestamp: Date.now(),
+  }
+})
+
+fastify.get('/api/activity/:id', async (request, reply) => {
+  const { id } = request.params as { id: string }
+  const event = activityStore.getActivityById(id)
+  if (!event) {
+    reply.status(404).send({
+      error: `Activity event with id '${id}' not found`,
+      timestamp: Date.now(),
+    })
+    return
+  }
+  return {
+    event,
+    timestamp: Date.now(),
+  }
+})
+
+fastify.post('/api/activity', async (request, reply) => {
+  const body = request.body as any
+  if (!body || typeof body.title !== 'string' || !body.title.trim() || typeof body.detail !== 'string' || !body.detail.trim()) {
+    reply.status(400).send({
+      error: 'Missing required fields: title (non-empty string) and detail (non-empty string)',
+      timestamp: Date.now(),
+    })
+    return
+  }
+
+  const created = activityStore.createActivity({
+    type: body.type,
+    icon: body.icon,
+    title: body.title,
+    detail: body.detail,
+    severity: body.severity,
+    projectId: body.projectId,
+  })
+
+  reply.status(201).send({
+    event: created,
+    message: 'Activity event logged successfully',
+    timestamp: Date.now(),
+  })
+})
+
+fastify.post('/api/activity/reset', async (request, reply) => {
+  const activities = activityStore.resetActivities()
+  return {
+    success: true,
+    count: activities.length,
+    message: 'Activity feed reset to default seed',
     timestamp: Date.now(),
   }
 })

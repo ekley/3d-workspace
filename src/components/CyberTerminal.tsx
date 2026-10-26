@@ -186,6 +186,7 @@ export function CyberTerminal() {
         print('task-delete <task_id>   - Delete task from Backend DB (e.g. task-delete atl-1)', 'output')
         print('task-sync               - Synchronize tasks with Backend Store', 'output')
         print('task-reset              - Reset task database to default seed', 'output')
+        print('activity [filter]       - Stream recent backend telemetry events', 'output')
         print('notes [proj_code]       - List all notes shards', 'output')
         print('note-view <note_id>     - Display note content details', 'output')
         print('note-create <title>     - Create general note shard', 'output')
@@ -683,6 +684,44 @@ export function CyberTerminal() {
         }
         deleteNote(note.id)
         print(`SUCCESS: Deleted note shard [${note.id}] : "${note.title}".`, 'success')
+        break
+      }
+
+      case 'activity': {
+        const filter = args[1]?.toLowerCase()
+        print('QUERYING BACKEND ACTIVITY TELEMETRY FEED...', 'system')
+        try {
+          let url = '/api/activity?limit=15'
+          if (filter) {
+            if (['info', 'success', 'warning', 'critical'].includes(filter)) {
+              url += `&severity=${filter}`
+            } else {
+              const matchedProj = projects.find((p) => p.code.toLowerCase() === filter || p.id.toLowerCase() === filter)
+              if (matchedProj) {
+                url += `&projectId=${matchedProj.id}`
+              } else {
+                url += `&type=${filter}`
+              }
+            }
+          }
+          const res = await fetch(url)
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          print('------------------------------------------------', 'system')
+          if (data.events.length === 0) {
+            print('No matching activity events found in stream.', 'output')
+          } else {
+            data.events.forEach((ev: any) => {
+              const type = (ev.severity || 'info').toUpperCase()
+              const typeKind: 'success' | 'error' | 'output' =
+                ev.severity === 'critical' ? 'error' : ev.severity === 'success' ? 'success' : 'output'
+              print(`[${ev.time || 'NOW'}] [${type}] ${ev.title} - ${ev.detail}`, typeKind)
+            })
+          }
+        } catch {
+          print('ERROR: UNABLE TO CONTACT BACKEND ACTIVITY SERVICE', 'error')
+          success = false
+        }
         break
       }
 
