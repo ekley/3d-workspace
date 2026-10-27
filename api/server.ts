@@ -77,6 +77,88 @@ fastify.get('/api/whoami', async (request, reply) => {
   }
 })
 
+fastify.get('/api/diagnostics', async (request, reply) => {
+  const mem = process.memoryUsage()
+  const roundMb = (bytes: number) => Math.round((bytes / (1024 * 1024)) * 100) / 100
+
+  return {
+    status: 'NOMINAL',
+    subsystems: {
+      tasks: {
+        status: 'ONLINE',
+        count: taskStore.getAllTasks().length,
+      },
+      projects: {
+        status: 'ONLINE',
+        count: projectStore.getAllProjects().length,
+      },
+      activity: {
+        status: 'ONLINE',
+        count: activityStore.getAllActivities().length,
+      },
+    },
+    process: {
+      pid: process.pid,
+      nodeVersion: process.version,
+      uptimeSeconds: Math.floor(process.uptime()),
+      memory: {
+        heapUsedMb: roundMb(mem.heapUsed),
+        heapTotalMb: roundMb(mem.heapTotal),
+        rssMb: roundMb(mem.rss),
+        externalMb: roundMb(mem.external),
+      },
+    },
+    os: {
+      platform: os.platform(),
+      arch: os.arch(),
+      totalMemMb: Math.round(os.totalmem() / (1024 * 1024)),
+      freeMemMb: Math.round(os.freemem() / (1024 * 1024)),
+    },
+    timestamp: Date.now(),
+  }
+})
+
+fastify.get('/api/system/diagnostics', async (request, reply) => {
+  const mem = process.memoryUsage()
+  const roundMb = (bytes: number) => Math.round((bytes / (1024 * 1024)) * 100) / 100
+
+  return {
+    status: 'NOMINAL',
+    subsystems: {
+      tasks: {
+        status: 'ONLINE',
+        count: taskStore.getAllTasks().length,
+      },
+      projects: {
+        status: 'ONLINE',
+        count: projectStore.getAllProjects().length,
+      },
+      activity: {
+        status: 'ONLINE',
+        count: activityStore.getAllActivities().length,
+      },
+    },
+    process: {
+      pid: process.pid,
+      nodeVersion: process.version,
+      uptimeSeconds: Math.floor(process.uptime()),
+      memory: {
+        heapUsedMb: roundMb(mem.heapUsed),
+        heapTotalMb: roundMb(mem.heapTotal),
+        rssMb: roundMb(mem.rss),
+        externalMb: roundMb(mem.external),
+      },
+    },
+    os: {
+      platform: os.platform(),
+      arch: os.arch(),
+      totalMemMb: Math.round(os.totalmem() / (1024 * 1024)),
+      freeMemMb: Math.round(os.freemem() / (1024 * 1024)),
+    },
+    timestamp: Date.now(),
+  }
+})
+
 // ==========================================
 // RESTful Task Management API & Persistence
 // ==========================================
