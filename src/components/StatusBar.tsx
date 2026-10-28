@@ -12,7 +12,7 @@ export function StatusBar() {
 
   const [time, setTime] = useState(new Date())
   const [uptime, setUptime] = useState(0)
-  const [ping, setPing] = useState(14)
+  const [ping, setPing] = useState<number | null>(12)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -23,10 +23,25 @@ export function StatusBar() {
   }, [])
 
   useEffect(() => {
-    const pingTimer = setInterval(() => {
-      setPing(Math.floor(Math.random() * 34) + 12)
-    }, 2000)
-    return () => clearInterval(pingTimer)
+    let mounted = true
+    const probePing = async () => {
+      const t0 = performance.now()
+      try {
+        const res = await fetch(`/api/ping?t=${Date.now()}`, { cache: 'no-store' })
+        if (res.ok && mounted) {
+          const rtt = Math.max(1, Math.round(performance.now() - t0))
+          setPing(rtt)
+        }
+      } catch {
+        // Backend offline or unreachable - keep last state
+      }
+    }
+    probePing()
+    const pingTimer = setInterval(probePing, 3000)
+    return () => {
+      mounted = false
+      clearInterval(pingTimer)
+    }
   }, [])
 
   const formatTimer = (sec: number) => {
@@ -57,7 +72,7 @@ export function StatusBar() {
       ) : (
         <span style={{ color: 'var(--text-3)' }} title="Operating in local memory mode">○ API LOCAL</span>
       )}
-      <span>PING {ping}MS</span>
+      <span>PING {ping !== null ? `${ping}MS` : '--MS'}</span>
       <span>{timeStr}</span>
       <span>UPTIME {formatUptime(uptime)}</span>
       <span>NEXUS CORE v0.1</span>

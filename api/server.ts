@@ -29,6 +29,32 @@ fastify.get('/api/health', async (request, reply) => {
   return { status: 'ok', timestamp: Date.now() }
 })
 
+fastify.get('/api/ping', async (request, reply) => {
+  const query = request.query as { t?: string; echo?: string }
+  const clientTime = query.t ? parseInt(query.t, 10) : undefined
+  const now = Date.now()
+  return {
+    pong: true,
+    timestamp: now,
+    clientTimestamp: !isNaN(clientTime!) ? clientTime : undefined,
+    uptime: Math.floor(process.uptime()),
+    echo: query.echo,
+  }
+})
+
+fastify.get('/api/system/ping', async (request, reply) => {
+  const query = request.query as { t?: string; echo?: string }
+  const clientTime = query.t ? parseInt(query.t, 10) : undefined
+  const now = Date.now()
+  return {
+    pong: true,
+    timestamp: now,
+    clientTimestamp: !isNaN(clientTime!) ? clientTime : undefined,
+    uptime: Math.floor(process.uptime()),
+    echo: query.echo,
+  }
+})
+
 fastify.get('/api/stats', async (request, reply) => {
   return {
     cpus: os.cpus(),
