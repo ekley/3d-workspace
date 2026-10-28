@@ -382,6 +382,49 @@ export function CyberTerminal() {
         }
         break
 
+      case 'ping': {
+        const countArg = args[1] ? parseInt(args[1], 10) : 3
+        const count = Math.min(Math.max(isNaN(countArg) ? 3 : countArg, 1), 5)
+        print(`PROBING BACKEND NETWORK INTERFACE (127.0.0.1)...`, 'system')
+
+        const rtts: number[] = []
+        let successCount = 0
+
+        for (let i = 1; i <= count; i++) {
+          const t0 = performance.now()
+          try {
+            const res = await fetch(`/api/ping?t=${Date.now()}&seq=${i}`, { cache: 'no-store' })
+            const rtt = Math.max(1, Math.round(performance.now() - t0))
+            if (res.ok) {
+              const data = await res.json()
+              rtts.push(rtt)
+              successCount++
+              print(`SEQ ${i}: Reply from 127.0.0.1: bytes=32 time=${rtt}ms status=PONG uptime=${data.uptime}s`, 'output')
+            } else {
+              print(`SEQ ${i}: HTTP Error ${res.status}`, 'error')
+            }
+          } catch {
+            print(`SEQ ${i}: Request timed out (Backend API offline)`, 'error')
+          }
+          if (i < count) {
+            await new Promise((resolve) => setTimeout(resolve, 300))
+          }
+        }
+
+        print('------------------------------------------------', 'system')
+        const lossPercent = Math.round(((count - successCount) / count) * 100)
+        print(`--- 127.0.0.1 ping statistics ---`, 'system')
+        print(`${count} packets transmitted, ${successCount} received, ${lossPercent}% packet loss`, lossPercent === 0 ? 'success' : 'error')
+        if (rtts.length > 0) {
+          const min = Math.min(...rtts)
+          const max = Math.max(...rtts)
+          const avg = (rtts.reduce((a, b) => a + b, 0) / rtts.length).toFixed(1)
+          print(`rtt min/avg/max = ${min}/${avg}/${max} ms`, 'output')
+        }
+        if (successCount === 0) success = false
+        break
+      }
+
       case 'projects':
         print('PROJECT DATABASE DUMP //', 'system')
         print('------------------------------------------------', 'system')
