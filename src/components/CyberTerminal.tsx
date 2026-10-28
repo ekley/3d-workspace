@@ -179,6 +179,7 @@ export function CyberTerminal() {
         print('version                 - Show backend build version', 'output')
         print('time                    - Server time & clock drift', 'output')
         print('whoami                  - Identify backend host operator', 'output')
+        print('ping [count]            - ICMP-style latency probe to Backend API', 'output')
         print('projects                - Database of all projects', 'output')
         print('tasks [proj_code]       - List tasks (e.g. tasks ATL)', 'output')
         print('complete <task_id>      - Set task completed (e.g. complete atl-1)', 'output')
