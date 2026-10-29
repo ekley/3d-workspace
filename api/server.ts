@@ -103,6 +103,86 @@ fastify.get('/api/whoami', async (request, reply) => {
   }
 })
 
+fastify.get('/api/user/profile', async (request, reply) => {
+  const tasks = taskStore.getAllTasks()
+  const completedTasks = tasks.filter((t) => t.status === 'completed').length
+  const projects = projectStore.getAllProjects()
+  const activeProjects = projects.filter((p) => p.status === 'active').length
+
+  const level = 27
+  const xp = 6820
+  const xpToNext = 8000
+  const xpPercent = Math.round((xp / xpToNext) * 10000) / 100
+
+  return {
+    operator: {
+      name: 'Elena Voss',
+      handle: 'evoss',
+      title: 'Lead Product Engineer',
+      rank: 'Cyber Architect',
+      role: 'OPERATOR_PRIME',
+      level,
+      xp,
+      xpToNext,
+      xpPercent,
+      streak: 14,
+      productivityScore: 92,
+      status: 'ONLINE',
+    },
+    summary: {
+      totalTasks: tasks.length,
+      completedTasks,
+      activeProjects,
+    },
+    timestamp: Date.now(),
+  }
+})
+
+fastify.get('/api/profile', async (request, reply) => {
+  const tasks = taskStore.getAllTasks()
+  const completedTasks = tasks.filter((t) => t.status === 'completed').length
+  const projects = projectStore.getAllProjects()
+  const activeProjects = projects.filter((p) => p.status === 'active').length
+
+  const level = 27
+  const xp = 6820
+  const xpToNext = 8000
+  const xpPercent = Math.round((xp / xpToNext) * 10000) / 100
+
+  return {
+    operator: {
+      name: 'Elena Voss',
+      handle: 'evoss',
+      title: 'Lead Product Engineer',
+      rank: 'Cyber Architect',
+      role: 'OPERATOR_PRIME',
+      level,
+      xp,
+      xpToNext,
+      xpPercent,
+      streak: 14,
+      productivityScore: 92,
+      status: 'ONLINE',
+    },
+    summary: {
+      totalTasks: tasks.length,
+      completedTasks,
+      activeProjects,
+    },
+    timestamp: Date.now(),
+  }
+})
+
+fastify.post('/api/user/streak', async (request, reply) => {
+  return {
+    success: true,
+    streak: 15,
+    bonusXp: 50,
+    message: 'Daily check-in verified. Streak incremented.',
+    timestamp: Date.now(),
+  }
+})
+
 fastify.get('/api/diagnostics', async (request, reply) => {
   const mem = process.memoryUsage()
   const roundMb = (bytes: number) => Math.round((bytes / (1024 * 1024)) * 100) / 100
