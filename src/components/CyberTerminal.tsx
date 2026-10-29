@@ -179,6 +179,7 @@ export function CyberTerminal() {
         print('version                 - Show backend build version', 'output')
         print('time                    - Server time & clock drift', 'output')
         print('whoami                  - Identify backend host operator', 'output')
+        print('profile                 - Operator RPG progression & telemetry', 'output')
         print('ping [count]            - ICMP-style latency probe to Backend API', 'output')
         print('projects                - Database of all projects', 'output')
         print('tasks [proj_code]       - List tasks (e.g. tasks ATL)', 'output')
@@ -424,6 +425,28 @@ export function CyberTerminal() {
         if (successCount === 0) success = false
         break
       }
+
+      case 'profile':
+        print('FETCHING OPERATOR PROFILE TELEMETRY...', 'system')
+        try {
+          const res = await fetch('/api/user/profile')
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          const op = data.operator
+          const sum = data.summary
+          print('------------------------------------------------', 'system')
+          print(`OPERATOR: ${op.name.toUpperCase()} (@${op.handle})`, 'output')
+          print(`CLASSIFICATION: [${op.rank.toUpperCase()}] // ${op.role}`, 'output')
+          print(`TITLE: ${op.title}`, 'output')
+          print(`STATUS: ${op.status} · PRODUCTIVITY: ${op.productivityScore}%`, 'output')
+          print(`PROGRESSION: LEVEL ${op.level} (${op.xp} / ${op.xpToNext} XP · ${op.xpPercent}%)`, 'success')
+          print(`ACTIVE STREAK: ${op.streak} CONSECUTIVE DAYS`, 'output')
+          print(`WORKSPACE STATS: ${sum.activeProjects} active projects · ${sum.completedTasks}/${sum.totalTasks} tasks completed`, 'output')
+        } catch (err) {
+          print('ERROR: UNABLE TO RETRIEVE OPERATOR PROFILE FROM BACKEND', 'error')
+          success = false
+        }
+        break
 
       case 'projects':
         print('PROJECT DATABASE DUMP //', 'system')
