@@ -4,6 +4,7 @@ import os from 'os'
 import { taskStore, TaskPriority, TaskStatus, WorkspaceSummary } from './taskStore'
 import { projectStore, ProjectStatus } from './projectStore'
 import { activityStore, ActivitySeverity, ActivityEvent } from './activityStore'
+import { noteStore, NoteCategory } from './noteStore'
 
 const fastify = Fastify({
   logger: true
@@ -202,6 +203,10 @@ fastify.get('/api/diagnostics', async (request, reply) => {
         status: 'ONLINE',
         count: activityStore.getAllActivities().length,
       },
+      notes: {
+        status: 'ONLINE',
+        count: noteStore.getAllNotes().length,
+      },
     },
     process: {
       pid: process.pid,
@@ -242,6 +247,10 @@ fastify.get('/api/system/diagnostics', async (request, reply) => {
       activity: {
         status: 'ONLINE',
         count: activityStore.getAllActivities().length,
+      },
+      notes: {
+        status: 'ONLINE',
+        count: noteStore.getAllNotes().length,
       },
     },
     process: {
@@ -548,6 +557,139 @@ fastify.post('/api/activity/reset', async (request, reply) => {
     timestamp: Date.now(),
   }
 })
+
+// ==========================================
+// RESTful Notes & Data Shards Management API
+// ==========================================
+
+fastify.get('/api/notes', async (request, reply) => {
+  const query = request.query as {
+    category?: string
+    projectId?: string
+    search?: string
+  }
+  const notes = noteStore.getAllNotes({
+    category: query.category as NoteCategory | undefined,
+    projectId: query.projectId,
+    search: query.search,
+  })
+  return {
+    notes,
+    count: notes.length,
+    timestamp: Date.now(),
+  }
+})
+
+fastify.get('/api/notes/:id', async (request, reply) => {
+  const { id } = request.params as { id: string }
+  const note = noteStore.getNoteById(id)
+  if (!note) {
+    reply.status(404).send({
+      error: `Note with id '${id}' not found`,
+      timestamp: Date.now(),
+    })
+    return
+  }
+  return { note, timestamp: Date.now() }
+})
+
+fastify.post('/api/notes', async (request, reply) => {
+  const body = request.body as any
+  if (!body || typeof body.title !== 'string' || !body.title.trim() || typeof body.content !== 'string') {
+    reply.status(400).send({
+      error: 'Missing required fields: title (non-empty string) and content (string)',
+      timestamp: Date.now(),
+    })
+    return
+  }
+
+  const created = noteStore.createNote({
+    title: body.title,
+    content: body.content,
+    category: body.category,
+    projectId: body.projectId,
+  })
+
+  activityStore.createActivity({
+    type: 'note-created',
+    icon: 'file',
+    title: 'NOTE CREATED',
+    detail: `${created.title} · shard [${created.id}]`,
+    severity: 'info',
+    projectId: created.projectId,
+  })
+
+  reply.status(201).send({
+    note: created,
+    message: 'Note created successfully',
+    timestamp: Date.now(),
+  })
+})
+
+fastify.patch('/api/notes/:id', async (request, reply) => {
+  const { id } = request.params as { id: string }
+  const body = request.body as any
+  if (!body || typeof body !== 'object') {
+    reply.status(400).send({ error: 'Invalid patch payload', timestamp: Date.now() })
+    return
+  }
+
+  const updated = noteStore.updateNote(id, body)
+  if (!updated) {
+    reply.status(404).send({ error: `Note with id '${id}' not found`, timestamp: Date.now() })
+    return
+  }
+
+  activityStore.createActivity({
+    type: 'note-updated',
+    icon: 'file',
+    title: 'NOTE UPDATED',
+    detail: `${updated.title} · shard [${updated.id}]`,
+    severity: 'info',
+    projectId: updated.projectId,
+  })
+
+  return {
+    note: updated,
+    message: 'Note updated successfully',
+    timestamp: Date.now(),
+  }
+})
+
+fastify.delete('/api/notes/:id', async (request, reply) => {
+  const { id } = request.params as { id: string }
+  const deleted = noteStore.deleteNote(id)
+  if (!deleted) {
+    reply.status(404).send({ error: `Note with id '${id}' not found`, timestamp: Date.now() })
+    return
+  }
+
+  activityStore.createActivity({
+    type: 'note-deleted',
+    icon: 'close',
+    title: 'NOTE DELETED',
+    detail: `Note shard [${id}] removed from database`,
+    severity: 'warning',
+  })
+
+  return {
+    success: true,
+    id,
+    message: 'Note deleted successfully',
+    timestamp: Date.now(),
+  }
+})
+
+fastify.post('/api/notes/reset', async (request, reply) => {
+  const notes = noteStore.resetNotes()
+  return {
+    success: true,
+    count: notes.length,
+    message: 'Notes database reset to default seed',
+    timestamp: Date.now(),
+  }
+})
+
 
 const start = async () => {
   try {

@@ -29,6 +29,7 @@ export function CyberTerminal() {
   const notes = useWorkspace((s) => s.notes)
   const createNote = useWorkspace((s) => s.createNote)
   const deleteNote = useWorkspace((s) => s.deleteNote)
+  const syncNotes = useWorkspace((s) => s.syncNotes)
   
   const soundEnabled = useWorkspace((s) => s.settings.soundEnabled)
   const updateSettings = useWorkspace((s) => s.updateSettings)
@@ -191,8 +192,10 @@ export function CyberTerminal() {
         print('activity [filter]       - Stream recent backend telemetry events', 'output')
         print('notes [proj_code]       - List all notes shards', 'output')
         print('note-view <note_id>     - Display note content details', 'output')
-        print('note-create <title>     - Create general note shard', 'output')
-        print('note-delete <note_id>   - Delete note shard', 'output')
+        print('note-create <title>     - Create general note shard via Backend API', 'output')
+        print('note-delete <note_id>   - Delete note shard from Backend DB', 'output')
+        print('note-sync               - Synchronize notes with Backend Store', 'output')
+        print('note-reset              - Reset notes database to default seed', 'output')
         print('focus <mins> [proj]     - Initiate focus timer (e.g. focus 25 atl)', 'output')
         print('xp <amount>             - Award debugging level XP', 'output')
         print('sound <on|off>          - Toggle synthesizers', 'output')
@@ -732,7 +735,7 @@ export function CyberTerminal() {
           content: 'Created via CLI console.',
           category: 'general',
         })
-        print(`SUCCESS: Created note shard: "${title}"! +10 XP awarded.`, 'success')
+        print(`SUCCESS: Created note shard: "${title}"! Dispatched to Backend Store. (+10 XP)`, 'success')
         break
       }
 
@@ -750,9 +753,44 @@ export function CyberTerminal() {
           break
         }
         deleteNote(note.id)
-        print(`SUCCESS: Deleted note shard [${note.id}] : "${note.title}".`, 'success')
+        print(`SUCCESS: Deleted note shard [${note.id}] : "${note.title}" from Backend Store.`, 'success')
         break
       }
+
+      case 'note-sync': {
+        print('SYNCHRONIZING NOTES WITH BACKEND STORE...', 'system')
+        try {
+          const t0 = Date.now()
+          await syncNotes()
+          const t1 = Date.now()
+          const rtt = t1 - t0
+          const currentNotes = useWorkspace.getState().notes
+          print('------------------------------------------------', 'system')
+          print(`BACKEND SYNC: OK (${rtt} ms round-trip)`, 'success')
+          print(`NOTES INDEXED: ${currentNotes.length} shards active in workspace matrix`, 'output')
+        } catch {
+          print('ERROR: UNABLE TO SYNCHRONIZE NOTES WITH BACKEND API', 'error')
+          success = false
+        }
+        break
+      }
+
+      case 'note-reset': {
+        print('DISPATCHING RESET TO BACKEND NOTES DATABASE...', 'system')
+        try {
+          const res = await fetch('/api/notes/reset', { method: 'POST' })
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          await syncNotes()
+          print('------------------------------------------------', 'system')
+          print(`SUCCESS: ${data.message} (${data.count} note shards restored).`, 'success')
+        } catch {
+          print('ERROR: UNABLE TO RESET NOTES STORE ON BACKEND', 'error')
+          success = false
+        }
+        break
+      }
+
 
       case 'activity': {
         const filter = args[1]?.toLowerCase()

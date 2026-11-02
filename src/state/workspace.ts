@@ -131,6 +131,7 @@ interface WorkspaceState {
   createNote: (input: { title: string; content: string; projectId?: string; category: NoteCategory }) => void
   updateNote: (id: string, patch: Partial<Note>) => void
   deleteNote: (id: string) => void
+  syncNotes: () => Promise<void>
 }
 
 export const useWorkspace = create<WorkspaceState>((set) => ({
@@ -487,6 +488,32 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
       corePulse: st.corePulse + 1,
       levelUp: isLevelUp ? level : st.levelUp,
     }))
+
+    fetch('/api/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: input.title,
+        content: input.content,
+        category: input.category,
+        projectId: input.projectId,
+      }),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json()
+          if (data.note?.id) {
+            set((st) => ({
+              notes: st.notes.map((n) => (n.id === note.id ? data.note : n)),
+              selectedNoteId: st.selectedNoteId === note.id ? data.note.id : st.selectedNoteId,
+              apiSyncStatus: 'synced',
+            }))
+          }
+        }
+      })
+      .catch(() => {
+        set({ apiSyncStatus: 'offline' })
+      })
   },
 
   updateNote: (id, patch) => {
@@ -521,6 +548,18 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
       corePulse: st.corePulse + 1,
       levelUp: isLevelUp ? level : st.levelUp,
     }))
+
+    fetch(`/api/notes/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    })
+      .then((res) => {
+        if (res.ok) set({ apiSyncStatus: 'synced' })
+      })
+      .catch(() => {
+        set({ apiSyncStatus: 'offline' })
+      })
   },
 
   deleteNote: (id) => {
@@ -535,8 +574,33 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
       activityLevel: Math.min(1, st.activityLevel + 0.1),
       corePulse: st.corePulse + 1,
     }))
+
+    fetch(`/api/notes/${id}`, { method: 'DELETE' })
+      .then((res) => {
+        if (res.ok) set({ apiSyncStatus: 'synced' })
+      })
+      .catch(() => {
+        set({ apiSyncStatus: 'offline' })
+      })
+  },
+
+  syncNotes: async () => {
+    try {
+      const res = await fetch('/api/notes')
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      if (Array.isArray(data.notes)) {
+        set({
+          notes: data.notes,
+          apiSyncStatus: 'synced',
+        })
+      }
+    } catch {
+      // Retain in-memory mock notes on offline fallback
+    }
   },
 }))
+
 
 // ponytail: module timers for activity decay (100ms) and focus sprint ticking (1s)
 setInterval(() => {
@@ -610,6 +674,7 @@ setInterval(() => {
 if (typeof window !== 'undefined') {
   setTimeout(() => {
     void useWorkspace.getState().syncTasks()
+    void useWorkspace.getState().syncNotes()
   }, 100)
 }
 
