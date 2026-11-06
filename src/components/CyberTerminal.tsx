@@ -196,6 +196,7 @@ export function CyberTerminal() {
         print('note-delete <note_id>   - Delete note shard from Backend DB', 'output')
         print('note-sync               - Synchronize notes with Backend Store', 'output')
         print('note-reset              - Reset notes database to default seed', 'output')
+        print('calendar [day|proj]     - Query schedule events from Backend API', 'output')
         print('focus <mins> [proj]     - Initiate focus timer (e.g. focus 25 atl)', 'output')
         print('xp <amount>             - Award debugging level XP', 'output')
         print('sound <on|off>          - Toggle synthesizers', 'output')
@@ -825,6 +826,45 @@ export function CyberTerminal() {
           }
         } catch {
           print('ERROR: UNABLE TO CONTACT BACKEND ACTIVITY SERVICE', 'error')
+          success = false
+        }
+        break
+      }
+
+      case 'calendar': {
+        const filter = args[1]?.toLowerCase()
+        print('QUERYING BACKEND CALENDAR SCHEDULE...', 'system')
+        try {
+          let url = '/api/events'
+          if (filter) {
+            if (['mon', 'tue', 'wed', 'thu', 'fri'].includes(filter)) {
+              url += `?day=${filter.toUpperCase()}`
+            } else {
+              const matchedProj = projects.find((p) => p.code.toLowerCase() === filter || p.id.toLowerCase() === filter)
+              if (matchedProj) {
+                url += `?projectId=${matchedProj.id}`
+              }
+            }
+          }
+          const res = await fetch(url)
+          if (!res.ok) throw new Error('API offline')
+          const data = await res.json()
+          print('------------------------------------------------', 'system')
+          if (!data.events || data.events.length === 0) {
+            print('No matching calendar events found.', 'output')
+          } else {
+            data.events.forEach((evt: any) => {
+              const proj = projects.find((p) => p.id === evt.projectId)
+              const tag = proj ? ` [${proj.code}]` : ''
+              const imp = evt.important ? ' ★' : ''
+              print(
+                `[${evt.day} ${evt.date} ${evt.time}] ${evt.title}${tag} @ ${evt.location}${imp}`,
+                evt.important ? 'success' : 'output',
+              )
+            })
+          }
+        } catch {
+          print('ERROR: UNABLE TO CONTACT BACKEND CALENDAR SERVICE', 'error')
           success = false
         }
         break

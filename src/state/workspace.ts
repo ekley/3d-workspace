@@ -132,6 +132,7 @@ interface WorkspaceState {
   updateNote: (id: string, patch: Partial<Note>) => void
   deleteNote: (id: string) => void
   syncNotes: () => Promise<void>
+  syncEvents: () => Promise<void>
 }
 
 export const useWorkspace = create<WorkspaceState>((set) => ({
@@ -599,6 +600,22 @@ export const useWorkspace = create<WorkspaceState>((set) => ({
       // Retain in-memory mock notes on offline fallback
     }
   },
+
+  syncEvents: async () => {
+    try {
+      const res = await fetch('/api/events')
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      if (Array.isArray(data.events)) {
+        set({
+          events: data.events,
+          apiSyncStatus: 'synced',
+        })
+      }
+    } catch {
+      // Retain in-memory mock events on offline fallback
+    }
+  },
 }))
 
 
@@ -675,6 +692,7 @@ if (typeof window !== 'undefined') {
   setTimeout(() => {
     void useWorkspace.getState().syncTasks()
     void useWorkspace.getState().syncNotes()
+    void useWorkspace.getState().syncEvents()
   }, 100)
 }
 

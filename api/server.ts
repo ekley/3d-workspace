@@ -5,6 +5,7 @@ import { taskStore, TaskPriority, TaskStatus, WorkspaceSummary } from './taskSto
 import { projectStore, ProjectStatus } from './projectStore'
 import { activityStore, ActivitySeverity, ActivityEvent } from './activityStore'
 import { noteStore, NoteCategory } from './noteStore'
+import { eventStore } from './eventStore'
 
 const fastify = Fastify({
   logger: true
@@ -207,6 +208,10 @@ fastify.get('/api/diagnostics', async (request, reply) => {
         status: 'ONLINE',
         count: noteStore.getAllNotes().length,
       },
+      events: {
+        status: 'ONLINE',
+        count: eventStore.getAllEvents().length,
+      },
     },
     process: {
       pid: process.pid,
@@ -251,6 +256,10 @@ fastify.get('/api/system/diagnostics', async (request, reply) => {
       notes: {
         status: 'ONLINE',
         count: noteStore.getAllNotes().length,
+      },
+      events: {
+        status: 'ONLINE',
+        count: eventStore.getAllEvents().length,
       },
     },
     process: {
@@ -686,6 +695,122 @@ fastify.post('/api/notes/reset', async (request, reply) => {
     success: true,
     count: notes.length,
     message: 'Notes database reset to default seed',
+    timestamp: Date.now(),
+  }
+})
+
+// ==========================================
+// RESTful Calendar Events & Schedule API
+// ==========================================
+
+const handleGetEvents = async (request: any) => {
+  const query = request.query as {
+    day?: string
+    projectId?: string
+    important?: string
+  }
+  const important =
+    query.important === 'true' ? true : query.important === 'false' ? false : undefined
+
+  const events = eventStore.getAllEvents({
+    day: query.day,
+    projectId: query.projectId,
+    important,
+  })
+  return {
+    events,
+    count: events.length,
+    timestamp: Date.now(),
+  }
+}
+
+fastify.get('/api/events', handleGetEvents)
+fastify.get('/api/calendar', handleGetEvents)
+
+fastify.get('/api/events/:id', async (request, reply) => {
+  const { id } = request.params as { id: string }
+  const event = eventStore.getEventById(id)
+  if (!event) {
+    reply.status(404).send({
+      error: `Calendar event with id '${id}' not found`,
+      timestamp: Date.now(),
+    })
+    return
+  }
+  return { event, timestamp: Date.now() }
+})
+
+fastify.post('/api/events', async (request, reply) => {
+  const body = request.body as any
+  if (!body || typeof body.title !== 'string' || !body.title.trim()) {
+    reply.status(400).send({
+      error: 'Missing required field: title (non-empty string)',
+      timestamp: Date.now(),
+    })
+    return
+  }
+
+  const created = eventStore.createEvent({
+    title: body.title,
+    date: body.date,
+    day: body.day,
+    time: body.time,
+    duration: body.duration,
+    projectId: body.projectId,
+    participants: body.participants,
+    location: body.location,
+    important: body.important,
+  })
+
+  activityStore.createActivity({
+    type: 'event-scheduled',
+    icon: 'calendar',
+    title: 'EVENT SCHEDULED',
+    detail: `${created.day} ${created.time} · ${created.title}`,
+    severity: 'info',
+    projectId: created.projectId,
+  })
+
+  reply.status(201).send({
+    event: created,
+    message: 'Calendar event created successfully',
+    timestamp: Date.now(),
+  })
+})
+
+fastify.delete('/api/events/:id', async (request, reply) => {
+  const { id } = request.params as { id: string }
+  const deleted = eventStore.deleteEvent(id)
+  if (!deleted) {
+    reply.status(404).send({
+      error: `Calendar event with id '${id}' not found`,
+      timestamp: Date.now(),
+    })
+    return
+  }
+
+  activityStore.createActivity({
+    type: 'event-cancelled',
+    icon: 'close',
+    title: 'EVENT CANCELLED',
+    detail: `Calendar event [${id}] removed from schedule`,
+    severity: 'warning',
+  })
+
+  return {
+    success: true,
+    id,
+    message: 'Calendar event deleted successfully',
+    timestamp: Date.now(),
+  }
+})
+
+fastify.post('/api/events/reset', async (request, reply) => {
+  const events = eventStore.resetEvents()
+  return {
+    success: true,
+    count: events.length,
+    message: 'Calendar schedule reset to default seed',
     timestamp: Date.now(),
   }
 })
