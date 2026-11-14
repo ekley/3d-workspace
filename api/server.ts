@@ -815,6 +815,101 @@ fastify.post('/api/events/reset', async (request, reply) => {
   }
 })
 
+// ==========================================
+// Unified Workspace Search API
+// ==========================================
+
+const handleWorkspaceSearch = async (request: any) => {
+  const query = request.query as {
+    q?: string
+    type?: string
+    limit?: string
+  }
+  const q = (query.q ?? '').trim().toLowerCase()
+  const typeFilter = query.type?.trim().toLowerCase()
+  const parsedLimit = query.limit ? parseInt(query.limit, 10) : 10
+  const limit = !isNaN(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 50) : 10
+
+  const includeType = (t: string) => !typeFilter || typeFilter === t
+
+  const projects = includeType('projects')
+    ? projectStore
+      .getAllProjects()
+      .filter(
+        (p) =>
+          !q ||
+          p.name.toLowerCase().includes(q) ||
+          p.code.toLowerCase().includes(q) ||
+          p.id.toLowerCase().includes(q)
+      )
+      .slice(0, limit)
+    : []
+
+  const tasks = includeType('tasks')
+    ? taskStore
+      .getAllTasks()
+      .filter(
+        (t) =>
+          !q ||
+          t.title.toLowerCase().includes(q) ||
+          t.id.toLowerCase().includes(q) ||
+          t.assignee.toLowerCase().includes(q) ||
+          t.tags.some((tag) => tag.toLowerCase().includes(q))
+      )
+      .slice(0, limit)
+    : []
+
+  const notes = includeType('notes')
+    ? noteStore.getAllNotes({ search: q || undefined }).slice(0, limit)
+    : []
+
+  const events = includeType('events')
+    ? eventStore
+      .getAllEvents()
+      .filter(
+        (e) =>
+          !q ||
+          e.title.toLowerCase().includes(q) ||
+          e.location.toLowerCase().includes(q) ||
+          e.day.toLowerCase().includes(q)
+      )
+      .slice(0, limit)
+    : []
+
+  const activity = includeType('activity')
+    ? activityStore
+      .getAllActivities()
+      .filter(
+        (a) =>
+          !q ||
+          a.title.toLowerCase().includes(q) ||
+          a.detail.toLowerCase().includes(q) ||
+          a.type.toLowerCase().includes(q)
+      )
+      .slice(0, limit)
+    : []
+
+  const totalCount =
+    projects.length + tasks.length + notes.length + events.length + activity.length
+
+  return {
+    query: query.q ?? '',
+    type: typeFilter ?? 'all',
+    totalCount,
+    results: {
+      projects,
+      tasks,
+      notes,
+      events,
+      activity,
+    },
+    timestamp: Date.now(),
+  }
+}
+
+fastify.get('/api/search', handleWorkspaceSearch)
+fastify.get('/api/workspace/search', handleWorkspaceSearch)
+
 
 const start = async () => {
   try {
